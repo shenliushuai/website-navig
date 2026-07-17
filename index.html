@@ -7,11 +7,8 @@
     <script src="https://cdn.tailwindcss.com">
     </script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-    <!-- lunar-javascript: 黄历宜忌计算库 -->
-    <script src="https://unpkg.com/lunar-javascript/lunar.js"></script>
 
     <style>
-        /* 基础样式与之前一致，保持全部功能 */
         .glass {
             background: #ffffff !important;
             border: 1px solid #e5e7eb;
@@ -31,11 +28,7 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
         }
         .bg-cyber {
-            background: linear-gradient(135deg, 
-                #fafbfc 0%,      /* 极浅灰白 */
-                #f1f5f9 50%,     /* 浅灰蓝 */
-                #e2e8f0 100%     /* 灰蓝 */
-            );
+            background: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 50%, #e2e8f0 100%);
         }
         .site-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -56,36 +49,16 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        
-        /* 自定义滚动条 - 深色模式 */
-        body.dark-mode ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        body.dark-mode ::-webkit-scrollbar-track {
-            background: #0f172a;
-            border-radius: 4px;
-        }
-        body.dark-mode ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #475569 0%, #334155 100%);
-            border-radius: 4px;
-            border: 2px solid #0f172a;
-        }
-        body.dark-mode ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-        }
-        .modal-content {
-            pointer-events: auto;
-        }
+
         .cal-cell {
-            min-height: 76px;
+            min-height: 72px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 4px 2px;
+            padding: 3px 2px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             position: relative;
             background: #fafafa;
             transition: all 0.2s ease;
@@ -94,7 +67,7 @@
         }
         .cal-cell:hover {
             background: #e5e7eb;
-            transform: scale(1.05);
+            transform: scale(1.04);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         .cal-cell.selected {
@@ -102,31 +75,21 @@
             color: #92400e;
             border-color: #f59e0b;
             transform: scale(1.05);
-            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4), 
-                        0 0 0 1px rgba(245, 158, 11, 0.2),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.5);
-        }
-        .cal-cell.selected .day-num {
-            color: #78350f;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
-        }
-        .cal-cell.selected .lunar-day,
-        .cal-cell.selected .tag {
-            color: #92400e;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
         }
         .cal-cell .day-num {
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.2;
         }
         .cal-cell .lunar-day {
-            font-size: 10px;
+            font-size: 9px;
             color: #6b7280;
             line-height: 1.2;
             margin-top: 1px;
         }
         .cal-cell .tag {
-            font-size: 9px;
+            font-size: 8px;
             padding: 1px 4px;
             border-radius: 4px;
             margin-top: 1px;
@@ -137,20 +100,13 @@
             background: rgba(0, 0, 0, 0.05);
             color: #374151;
         }
-        .cal-cell.holiday .day-num {
-            color: #e11d48;
-        }
-        .cal-cell.workday .day-num {
-            color: #2563eb;
-        }
         .cal-cell.today {
             background: #f59e0b;
             color: white;
             border-color: #f59e0b;
         }
-        .cal-cell.today .lunar-day,
-        .cal-cell.today .tag {
-            color: rgba(255, 255, 255, 0.9);
+        .cal-cell.today .lunar-day {
+            color: rgba(255, 255, 255, 0.85);
         }
         .cal-cell.weekend .day-num {
             color: #e11d48;
@@ -167,10 +123,6 @@
             background: #dbeafe;
             color: #1e40af;
         }
-        .cal-cell .tag-festival {
-            background: #fef3c7;
-            color: #92400e;
-        }
         .nav-btn {
             padding: 4px 12px;
             border-radius: 6px;
@@ -183,17 +135,7 @@
         .nav-btn:hover {
             background: #e5e7eb;
         }
-        .error-banner {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 10px;
-            font-size: 14px;
-            border: 1px solid #fecaca;
-        }
-        
-        /* 弹窗动画 */
+
         @keyframes modalSlideUp {
             from {
                 opacity: 0;
@@ -204,113 +146,51 @@
                 transform: translateY(0) scale(1);
             }
         }
-        body.dark-mode .animate-slide-up {
+        .animate-slide-up {
             animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        /* 深色模式样式 */
+
         body.dark-mode {
-            background: linear-gradient(135deg, 
-                #0a0e27 0%,      /* 深蓝紫 */
-                #050816 40%,     /* 极深蓝 */
-                #000000 100%     /* 纯黑 */
-            );
+            background: linear-gradient(135deg, #0a0e27 0%, #050816 40%, #000000 100%);
         }
         body.dark-mode .glass {
             background: #1e293b !important;
             border-color: #334155;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1);
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        body.dark-mode .glass::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.4), transparent, rgba(236, 72, 153, 0.4));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        body.dark-mode .glass:hover::before {
-            opacity: 1;
-        }
-        body.dark-mode .glass:hover {
-            box-shadow: 0 0 50px rgba(245, 158, 11, 0.4), 0 0 80px rgba(245, 158, 11, 0.2), 0 12px 32px rgba(0, 0, 0, 0.6);
-            border-color: rgba(245, 158, 11, 0.7);
         }
         body.dark-mode .glass-dark {
             background: rgba(15, 23, 42, 0.98);
             border-color: rgba(51, 65, 85, 0.9);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 
-                        0 0 0 1px rgba(255, 255, 255, 0.05),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            position: relative;
-        }
-        body.dark-mode .glass-dark::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(255, 255, 255, 0.1) 50%, 
-                transparent 100%
-            );
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
         }
         body.dark-mode .bg-white\/60 {
             background: rgba(15, 23, 42, 0.95) !important;
-            border-color: rgba(51, 65, 85, 0.6);
         }
-        
-        /* 文字颜色 - 极高对比度 */
         body.dark-mode .text-gray-700,
         body.dark-mode .text-gray-800,
         body.dark-mode .text-gray-900 {
-            color: #ffffff !important;  /* 纯白，最高对比度 */
+            color: #ffffff !important;
         }
         body.dark-mode .text-gray-600 {
-            color: #f1f5f9 !important;  /* 极浅灰 */
+            color: #f1f5f9 !important;
         }
         body.dark-mode .text-gray-500 {
-            color: #cbd5e1 !important;  /* 浅灰 */
+            color: #cbd5e1 !important;
         }
-        body.dark-mode .text-gray-400 {
-            color: #94a3b8 !important;  /* 中灰 */
-        }
-        
-        /* 边框颜色 */
         body.dark-mode .border-gray-200,
         body.dark-mode .border-gray-300 {
             border-color: #334155 !important;
         }
-        
-        /* 搜索框深色样式 */
         body.dark-mode #searchInput {
             color: #f1f5f9 !important;
         }
         body.dark-mode #searchInput::placeholder {
             color: #64748b !important;
         }
-        body.dark-mode #searchEngine {
-            color: #cbd5e1 !important;
-        }
         body.dark-mode .bg-white {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
             border-color: #334155 !important;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
-        
-        /* 表单输入框深色样式 */
         body.dark-mode input[type="text"],
         body.dark-mode input[type="url"],
         body.dark-mode select {
@@ -318,256 +198,31 @@
             border-color: #334155 !important;
             color: #f1f5f9 !important;
         }
-        body.dark-mode input[type="text"]::placeholder,
-        body.dark-mode input[type="url"]::placeholder {
-            color: #64748b !important;
+        body.dark-mode select option {
+            background: #0f172a !important;
+            color: #f1f5f9 !important;
         }
-        body.dark-mode input[type="text"]:focus,
-        body.dark-mode input[type="url"]:focus,
-        body.dark-mode select:focus {
-            border-color: #f59e0b !important;
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
-        }
-        
-        /* 弹窗深色样式 */
         body.dark-mode .modal-content {
             background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
             border-color: #475569;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 
-                        0 0 0 1px rgba(255, 255, 255, 0.08),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            position: relative;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9);
         }
-        body.dark-mode .modal-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(245, 158, 11, 0.6) 30%, 
-                rgba(236, 72, 153, 0.6) 70%, 
-                transparent 100%
-            );
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
-        }
-        body.dark-mode .modal-content h3 {
-            color: #f8fafc !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        body.dark-mode button:hover.bg-gray-100 {
-            background: #334155 !important;
-        }
-        
-        /* 弹窗关闭按钮 */
-        body.dark-mode .rounded-full.hover\:bg-gray-100 {
-            color: #cbd5e1 !important;
-        }
-        body.dark-mode .rounded-full.hover\:bg-gray-100:hover {
-            background: #475569 !important;
-            color: #f1f5f9 !important;
-        }
-        
-        /* 弹窗内部容器深色适配 */
-        body.dark-mode #detailContent {
-            color: #e2e8f0;
-        }
-        body.dark-mode #calendarGrid {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        body.dark-mode #calendarYiJi {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
-            border: 1px solid #334155;
-            color: #ffffff;  /* 纯白 */
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
-        }
-        
-        /* 所有重要文字的阴影效果 - 增强可读性 */
-        body.dark-mode .text-lg,
-        body.dark-mode .text-xl,
-        body.dark-mode .text-2xl,
-        body.dark-mode h1,
-        body.dark-mode h2,
-        body.dark-mode h3,
-        body.dark-mode h4,
-        body.dark-mode .font-semibold,
-        body.dark-mode .font-bold {
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-        }
-        
-        /* 弹窗内的浅色背景统一深色化 */
-        body.dark-mode .bg-blue-50,
-        body.dark-mode .bg-sky-50,
-        body.dark-mode .bg-green-50,
-        body.dark-mode .bg-rose-50,
-        body.dark-mode .bg-amber-50,
-        body.dark-mode .bg-purple-50,
-        body.dark-mode .bg-indigo-50,
-        body.dark-mode .bg-gray-50 {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-        }
-        
-        /* 弹窗内的渐变背景深色化 */
-        body.dark-mode .bg-gradient-to-r.from-amber-50.to-orange-50 {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
-            border-color: #334155 !important;
-        }
-        
-        /* 弹窗内的边框颜色 */
-        body.dark-mode .border-blue-100,
-        body.dark-mode .border-gray-100,
-        body.dark-mode .border-green-200,
-        body.dark-mode .border-rose-200,
-        body.dark-mode .border-amber-200,
-        body.dark-mode .border-blue-200,
-        body.dark-mode .border-purple-200,
-        body.dark-mode .border-indigo-200 {
-            border-color: #334155 !important;
-        }
-        
-        /* 黄历详细信息文字颜色优化 - 极高对比度 */
-        body.dark-mode .text-gray-800 {
-            color: #ffffff !important;  /* 纯白 */
-        }
-        body.dark-mode .text-gray-700 {
-            color: #f8fafc !important;  /* 极浅灰白 */
-        }
-        body.dark-mode .text-gray-600 {
-            color: #e2e8f0 !important;  /* 浅灰白 */
-        }
-        body.dark-mode .text-green-600 {
-            color: #4ade80 !important;  /* 更亮的绿色 */
-        }
-        body.dark-mode .text-rose-600 {
-            color: #fb7185 !important;  /* 亮红色 */
-        }
-        body.dark-mode .text-blue-600 {
-            color: #60a5fa !important;  /* 亮蓝色 */
-        }
-        body.dark-mode .text-blue-700 {
-            color: #3b82f6 !important;  /* 更亮的蓝色 */
-        }
-        body.dark-mode .text-amber-700 {
-            color: #fbbf24 !important;  /* 亮金色 */
-        }
-        body.dark-mode .text-purple-700 {
-            color: #d8b4fe !important;  /* 更亮的紫色 */
-        }
-        body.dark-mode .text-indigo-700 {
-            color: #a5b4fc !important;  /* 更亮的靛蓝 */
-        }
-        
-        /* 弹窗内的文字颜色优化 */
-        body.dark-mode .font-bold {
-            color: #ffffff !important;  /* 纯白 */
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-        body.dark-mode .text-gray-700,
-        body.dark-mode .text-gray-800 {
-            color: #f8fafc !important;  /* 极浅灰白 */
-        }
-        
-        /* 导航按钮深色增强 */
-        body.dark-mode .nav-btn {
-            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-            color: #e2e8f0;
-            border: 1px solid #475569;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        body.dark-mode .nav-btn:hover {
-            background: linear-gradient(135deg, #475569 0%, #334155 100%);
-            border-color: #64748b;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-        }
-        
-        /* 日历标题深色 */
-        body.dark-mode #calendarTitle {
-            color: #f8fafc !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* 弹窗内的提示标签深色化 */
-        body.dark-mode .bg-rose-100,
-        body.dark-mode .bg-green-100,
-        body.dark-mode .bg-blue-100 {
-            background: rgba(30, 41, 59, 0.8) !important;
-            border: 1px solid #334155;
-        }
-        body.dark-mode .bg-amber-500.text-white {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
-            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
-        }
-        
-        /* 弹窗内的链接样式 */
-        body.dark-mode a.text-blue-600 {
-            color: #60a5fa !important;
-        }
-        body.dark-mode a.text-blue-600:hover {
-            color: #93c5fd !important;
-            text-decoration: underline;
-        }
-        
-        /* 弹窗底部信息栏 */
-        body.dark-mode .text-center.p-2.bg-gray-50 {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
-            border: 1px solid #334155;
-            color: #94a3b8;
-        }
-        
-        /* 深色模式下的图标颜色优化 */
-        body.dark-mode .fa {
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* 深色模式下的分隔线 */
-        body.dark-mode .border-t {
-            border-color: #334155 !important;
-        }
-        
-        /* 深色模式下的选中效果增强 */
-        body.dark-mode ::selection {
-            background: rgba(245, 158, 11, 0.3);
-            color: #f8fafc;
-        }
-        
-        /* 日历单元格深色样式 */
         body.dark-mode .cal-cell {
             background: #334155;
             border-color: #475569;
         }
         body.dark-mode .cal-cell:hover {
             background: #475569;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
         body.dark-mode .cal-cell.selected {
             background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
             color: #fef3c7;
             border-color: #fbbf24;
-            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.5), 
-                        0 0 0 1px rgba(251, 191, 36, 0.3),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-        body.dark-mode .cal-cell.selected .day-num {
-            color: #fffbeb !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        body.dark-mode .cal-cell.selected .lunar-day,
-        body.dark-mode .cal-cell.selected .tag {
-            color: #fef3c7 !important;
         }
         body.dark-mode .cal-cell.today {
             background: #f59e0b;
             color: #0f172a;
-            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.5);
         }
-        
-        /* 导航按钮深色样式 */
         body.dark-mode .nav-btn {
             background: #334155;
             color: #e2e8f0;
@@ -575,58 +230,115 @@
         body.dark-mode .nav-btn:hover {
             background: #475569;
         }
-        
-        /* 网站卡片深色样式 - 极高对比度 */
         body.dark-mode .site-card {
             background: #1e293b;
             border-color: #334155;
         }
         body.dark-mode .site-card h3,
         body.dark-mode .site-card .text-gray-700,
-        body.dark-mode .site-card .text-gray-800,
-        body.dark-mode .site-card .text-gray-900 {
-            color: #ffffff !important;  /* 纯白 */
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        body.dark-mode .site-card .text-gray-800 {
+            color: #ffffff !important;
         }
-        body.dark-mode .site-card p {
-            color: #e2e8f0 !important;  /* 浅灰白 */
-        }
-        
-        /* 标签深色样式 - 极高对比度 */
         body.dark-mode .cal-cell .tag {
             background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;  /* 纯白 */
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
         }
         body.dark-mode .cal-cell .tag-holiday {
             background: rgba(225, 29, 72, 0.2);
             color: #fb7185;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
         body.dark-mode .cal-cell .tag-solar {
             background: rgba(16, 185, 129, 0.2);
-            color: #4ade80;  /* 更亮的绿色 */
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            color: #4ade80;
         }
         body.dark-mode .cal-cell .tag-work {
             background: rgba(59, 130, 246, 0.2);
             color: #60a5fa;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
-        body.dark-mode .cal-cell .tag-festival {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
+        .error-banner {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px;
+            font-size: 14px;
+            border: 1px solid #fecaca;
+        }
+        .api-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            padding: 1px 6px;
+            border-radius: 10px;
+        }
+        .api-status.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .api-status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .api-status.loading {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .api-status .dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .api-status.success .dot {
+            background: #22c55e;
+        }
+        .api-status.error .dot {
+            background: #ef4444;
+        }
+        .api-status.loading .dot {
+            background: #f59e0b;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* 天气7天预报 */
+        .weather-day {
+            text-align: center;
+            flex: 1;
+        }
+        .weather-day .day-label {
+            font-size: 9px;
+            color: #9ca3af;
+        }
+        .weather-day .day-icon {
+            font-size: 14px;
+            margin: 1px 0;
+        }
+        .weather-day .day-temp {
+            font-size: 9px;
         }
     </style>
 </head>
 <body class="min-h-screen bg-cyber overflow-x-hidden">
 
-    <!-- 错误占位 -->
+    <div id="storageWarning" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:10px; text-align:center; font-size:14px;">
+        ⚠️ 当前环境不支持 localStorage，所有数据仅在内存中保存，刷新后丢失。
+    </div>
+
     <div id="errorPlaceholder" style="display:none;" class="error-banner"></div>
 
     <div id="app" class="relative z-10 min-h-screen flex flex-col">
         <!-- 顶部状态栏 -->
-        <div class="bg-white/60 backdrop-blur-xl border-b border-gray-200/50 py-2 px-4">
+        <div class="bg-white/60 backdrop-blur-xl border-b border-gray-200/50 py-1.5 px-4">
             <div class="max-w-7xl mx-auto flex items-center justify-between text-xs">
                 <div class="flex items-center space-x-6">
                     <span class="text-gray-700 font-medium flex items-center">
@@ -642,25 +354,25 @@
 
         <!-- 顶部导航 -->
         <header class="glass-dark sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-pink-500 flex items-center justify-center shadow-lg">
-                            <i class="fa fa-bolt text-xl text-white"></i>
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-pink-500 flex items-center justify-center shadow-lg">
+                            <i class="fa fa-bolt text-lg text-white"></i>
                         </div>
                         <div>
-                            <h1 class="text-xl font-bold">CYBER NAV</h1>
+                            <h1 class="text-lg font-bold">CYBER NAV</h1>
                             <p class="text-xs text-gray-500">科技导航系统 · <span id="siteCount">144</span>个网站</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <button id="themeToggle" class="px-4 py-2 rounded-lg bg-gray-500/20 hover:bg-gray-500/30 border border-gray-500/40 text-gray-600 transition-all" title="切换主题">
+                    <div class="flex items-center space-x-2">
+                        <button id="themeToggle" class="px-3 py-1.5 rounded-lg bg-gray-500/20 hover:bg-gray-500/30 border border-gray-500/40 text-gray-600 transition-all text-sm" title="切换主题">
                             <i class="fa fa-moon-o"></i>
                         </button>
-                        <button id="addSiteBtn" class="px-4 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-600 transition-all flex items-center space-x-2">
+                        <button id="addSiteBtn" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-600 transition-all flex items-center space-x-1 text-sm">
                             <i class="fa fa-plus"></i><span class="hidden sm:inline">添加网站</span>
                         </button>
-                        <button id="toggleEdit" class="px-4 py-2 rounded-lg bg-gray-500/20 hover:bg-gray-500/30 border border-gray-500/40 text-gray-600 transition-all">
+                        <button id="toggleEdit" class="px-3 py-1.5 rounded-lg bg-gray-500/20 hover:bg-gray-500/30 border border-gray-500/40 text-gray-600 transition-all text-sm">
                             <i class="fa fa-pencil"></i>
                         </button>
                     </div>
@@ -668,106 +380,76 @@
             </div>
         </header>
 
-        <!-- 信息面板 -->
-        <section class="px-4 pt-8">
+        <!-- ===== 信息面板 - 三列均匀布局 ===== -->
+        <section class="px-4 pt-6">
             <div class="max-w-7xl mx-auto">
-                <div class="grid grid-cols-12 gap-4 mb-8">
-                    <!-- 时间/黄历 -->
-                    <div class="col-span-3 glass rounded-2xl p-4 cursor-pointer flex items-center" onclick="openDetailModal('calendar')">
+                <div class="grid grid-cols-12 gap-4 mb-6">
+                    <!-- 列1: 时间/黄历 (4列) -->
+                    <div class="col-span-4 glass rounded-2xl p-5 cursor-pointer flex items-center" onclick="openDetailModal('calendar')">
                         <div class="text-center w-full">
-                            <div class="text-3xl font-bold mb-1" id="currentTime">--:--</div>
-                            <div class="flex items-center justify-center space-x-3 mb-2">
-                                <span class="text-sm" id="currentDate">----年--月--日</span>
-                                <span class="text-xs" id="currentWeek">星期--</span>
+                            <div class="text-4xl font-bold mb-1" id="currentTime">--:--</div>
+                            <div class="flex items-center justify-center space-x-3 mb-1.5">
+                                <span class="text-base font-medium" id="currentDate">----年--月--日</span>
+                                <span class="text-xs text-gray-500" id="currentWeek">星期--</span>
                             </div>
-                            <div class="text-sm mb-2" id="lunarDate">农历 -- --</div>
-                            <div class="flex justify-center space-x-4 text-xs">
-                                <span class="text-green-600"><i class="fa fa-check-circle mr-1"></i>宜：<span id="yiText">祈福 出行</span></span>
-                                <span class="text-rose-600"><i class="fa fa-times-circle mr-1"></i>忌：<span id="jiText">动土 嫁娶</span></span>
+                            <div class="text-base mb-1.5" id="lunarDate">农历 -- --</div>
+                            <div class="flex justify-center space-x-8 text-sm">
+                                <span class="text-green-600"><i class="fa fa-check-circle mr-1.5"></i>宜：<span id="yiText">加载中...</span></span>
+                                <span class="text-rose-600"><i class="fa fa-times-circle mr-1.5"></i>忌：<span id="jiText">加载中...</span></span>
+                            </div>
+                            <div class="mt-2 flex justify-center">
+                                <span id="huangliApiStatus" class="api-status loading"><span class="dot"></span>黄历</span>
                             </div>
                         </div>
                     </div>
-                    <!-- 天气 -->
-                    <div class="col-span-4 glass rounded-2xl p-4 cursor-pointer" onclick="openDetailModal('weather')">
-                        <div class="flex items-center justify-between mb-3">
+
+                    <!-- 列2: 天气 (4列) -->
+                    <div class="col-span-4 glass rounded-2xl p-5 cursor-pointer" onclick="openDetailModal('weather')">
+                        <div class="flex items-center justify-between">
                             <div>
-                                <div class="text-2xl font-bold mb-1" id="weatherTemp">--°C</div>
-                                <div class="text-sm" id="weatherDesc">加载中...</div>
-                                <div class="text-xs text-gray-500" id="weatherUpdate">--</div>
+                                <div class="text-3xl font-bold" id="weatherTemp">--°C</div>
+                                <div class="text-sm text-gray-600" id="weatherDesc">加载中...</div>
+                                <div class="text-xs text-gray-400" id="weatherUpdate">--</div>
                             </div>
-                            <div class="text-4xl text-amber-500" id="weatherIcon">
+                            <div class="text-5xl text-amber-500" id="weatherIcon">
                                 <i class="fa fa-spinner fa-spin"></i>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-                            <div class="flex items-center"><i class="fa fa-tint text-blue-500 mr-1"></i><span id="weatherHumidity">湿度 --</span></div>
-                            <div class="flex items-center"><i class="fa fa-location-arrow text-cyan-500 mr-1"></i><span id="weatherWind">风速 --</span></div>
+                        <div class="flex justify-between text-sm mt-2">
+                            <span><i class="fa fa-tint text-blue-500 mr-1.5"></i><span id="weatherHumidity">湿度 --</span></span>
+                            <span><i class="fa fa-location-arrow text-cyan-500 mr-1.5"></i><span id="weatherWind">风速 --</span></span>
                         </div>
-                        <!-- 7天预报小图标 -->
-                        <div class="border-t border-gray-200 pt-2">
-                            <div class="text-xs text-gray-500 mb-2">未来7天</div>
-                            <div class="flex justify-between" id="weatherForecast7Days">
-                                <div class="text-center flex-1">
-                                    <div class="text-[10px] text-gray-500">今天</div>
-                                    <i class="fa fa-sun-o text-amber-500 text-base my-0.5"></i>
-                                    <div class="text-[10px]">25°/18°</div>
-                                </div>
-                                <div class="text-center flex-1">
-                                    <div class="text-[10px] text-gray-500">明天</div>
-                                    <i class="fa fa-cloud text-amber-400 text-base my-0.5"></i>
-                                    <div class="text-[10px]">26°/19°</div>
-                                </div>
-                                <div class="text-center flex-1">
-                                    <div class="text-[10px] text-gray-500">后天</div>
-                                    <i class="fa fa-cloud text-gray-400 text-base my-0.5"></i>
-                                    <div class="text-[10px]">24°/17°</div>
-                                </div>
-                                <div class="text-center flex-1">
-                                    <div class="text-[10px] text-gray-500">周五</div>
-                                    <i class="fa fa-umbrella text-blue-400 text-base my-0.5"></i>
-                                    <div class="text-[10px]">22°/16°</div>
-                                </div>
-                                <div class="text-center flex-1">
-                                    <div class="text-[10px] text-gray-500">周六</div>
-                                    <i class="fa fa-sun-o text-amber-500 text-base my-0.5"></i>
-                                    <div class="text-[10px]">27°/20°</div>
-                                </div>
-                                <div class="text-center flex-1">
-                                    <div class="text-[10px] text-gray-500">周日</div>
-                                    <i class="fa fa-cloud text-amber-400 text-base my-0.5"></i>
-                                    <div class="text-[10px]">28°/21°</div>
-                                </div>
-                                <div class="text-center flex-1">
-                                    <div class="text-[10px] text-gray-500">周一</div>
-                                    <i class="fa fa-cloud text-gray-400 text-base my-0.5"></i>
-                                    <div class="text-[10px]">25°/19°</div>
-                                </div>
-                            </div>
+                        <div class="border-t border-gray-200 mt-3 pt-3">
+                            <div class="flex justify-between" id="weatherForecast7Days"></div>
+                        </div>
+                        <div class="mt-2 flex justify-center">
+                            <span id="weatherApiStatus" class="api-status loading"><span class="dot"></span>天气</span>
                         </div>
                     </div>
-                    <!-- 油价 -->
-                    <div class="col-span-2 glass rounded-2xl p-4 cursor-pointer flex items-center" onclick="openDetailModal('oil')">
+
+                    <!-- 列3: 油价 (4列) -->
+                    <div class="col-span-4 glass rounded-2xl p-5 cursor-pointer flex items-center" onclick="openDetailModal('oil')">
                         <div class="w-full">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold flex items-center"><i class="fa fa-tint mr-2"></i>今日油价</span>
-                                <span id="oilPriceTrend" class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full"><i class="fa fa-arrow-down mr-1"></i>下调</span>
+                                <span class="font-bold text-lg flex items-center"><i class="fa fa-tint mr-2 text-amber-500"></i>今日油价</span>
+                                <div class="flex items-center gap-2">
+                                    <span id="oilPriceTrend" class="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full"><i class="fa fa-arrow-down mr-1"></i>下调</span>
+                                    <button onclick="event.stopPropagation(); forceRefreshOil();" class="text-sm text-blue-500 hover:text-blue-700 transition-colors" title="手动刷新">
+                                        <i class="fa fa-refresh" id="oilRefreshIcon"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div id="oilNextAdjust" class="text-xs text-gray-500 mb-2"><i class="fa fa-clock-o mr-1"></i>加载中...</div>
-                            <div class="space-y-1.5 text-sm">
-                                <div class="flex justify-between"><span>92# 汽油</span><span id="oil92" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span>95# 汽油</span><span id="oil95" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span>98# 汽油</span><span id="oil98" class="font-bold">--</span></div>
-                                <div class="flex justify-between"><span>0# 柴油</span><span id="oil0" class="font-bold">--</span></div>
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-base">
+                                <div class="flex justify-between"><span class="text-gray-600">92#</span><span id="oil92" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-600">95#</span><span id="oil95" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-600">98#</span><span id="oil98" class="font-bold">--</span></div>
+                                <div class="flex justify-between"><span class="text-gray-600">0#</span><span id="oil0" class="font-bold">--</span></div>
                             </div>
-                        </div>
-                    </div>
-                    <!-- 日历入口 -->
-                    <div class="col-span-3 glass rounded-2xl p-4 cursor-pointer flex items-center" onclick="openDetailModal('calendarFull')">
-                        <div class="text-center w-full">
-                            <div class="text-lg font-bold mb-2 flex items-center justify-center"><i class="fa fa-calendar mr-2 text-amber-500"></i>日历</div>
-                            <div class="text-3xl font-bold text-amber-600 mb-1" id="calendarDay">--</div>
-                            <div class="text-sm" id="calendarMonth">----年--月</div>
-                            <div class="text-xs text-gray-500 mt-2"><i class="fa fa-hand-pointer-o mr-1"></i>点击查看详情</div>
+                            <div class="text-xs text-gray-400 mt-2 text-center" id="oilUpdateTime">更新于 --</div>
+                            <div class="mt-1.5 flex justify-center">
+                                <span id="oilApiStatus" class="api-status loading"><span class="dot"></span>油价</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -775,31 +457,29 @@
         </section>
 
         <!-- 搜索 -->
-        <section class="py-8 px-4">
+        <section class="py-4 px-4">
             <div class="max-w-3xl mx-auto">
-                <div class="relative">
-                    <div class="relative glass-dark rounded-2xl p-1">
-                        <div class="flex items-center bg-white rounded-xl border border-gray-200">
-                            <i class="fa fa-search text-gray-400 ml-4"></i>
-                            <input type="text" id="searchInput" placeholder="搜索 144 个网站或输入网址..." class="flex-1 bg-transparent px-4 py-4 outline-none text-gray-800 placeholder-gray-400" />
-                            <select id="searchEngine" class="bg-transparent text-gray-600 px-4 py-4 outline-none cursor-pointer border-l border-gray-200">
-                                <option value="baidu">百度</option><option value="google">Google</option><option value="bing">Bing</option>
-                            </select>
-                        </div>
+                <div class="relative glass-dark rounded-2xl p-0.5">
+                    <div class="flex items-center bg-white rounded-xl border border-gray-200">
+                        <i class="fa fa-search text-gray-400 ml-4"></i>
+                        <input type="text" id="searchInput" placeholder="搜索 144 个网站或输入网址..." class="flex-1 bg-transparent px-4 py-3 outline-none text-gray-800 placeholder-gray-400 text-sm" />
+                        <select id="searchEngine" class="bg-transparent text-gray-600 px-3 py-3 outline-none cursor-pointer border-l border-gray-200 text-sm">
+                            <option value="baidu">百度</option><option value="google">Google</option><option value="bing">Bing</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 分类标签 -->
-        <section class="px-4 mb-4">
+        <section class="px-4 mb-3">
             <div class="max-w-7xl mx-auto">
                 <div class="flex items-center space-x-2 overflow-x-auto scrollbar-hide pb-2" id="categoryTabs"></div>
             </div>
         </section>
 
         <!-- 二级分类 -->
-        <section class="px-4 mb-6" id="subCategorySection" style="display: none;">
+        <section class="px-4 mb-4" id="subCategorySection" style="display: none;">
             <div class="max-w-7xl mx-auto">
                 <div class="flex items-center space-x-2 overflow-x-auto scrollbar-hide pb-2 pl-4 border-l-2 border-amber-500/30" id="subCategoryTabs"></div>
             </div>
@@ -859,31 +539,61 @@
         // ================================================================
         window.onerror = function(msg, url, line, col, error) {
             const ep = document.getElementById('errorPlaceholder');
-            if (ep) {
-                ep.style.display = 'block';
-                ep.innerHTML = `<strong>⚠️ 页面运行异常</strong><br>${msg}<br><span style="font-size:12px;color:#6b7280;">请查看控制台（F12）</span>`;
-            }
+            if (ep) { ep.style.display = 'block';
+                ep.innerHTML = `<strong>⚠️ 页面运行异常</strong><br>${msg}`; }
             console.error('全局错误:', msg, error);
             return true;
         };
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('未处理的 Promise 错误:', event.reason);
+            const ep = document.getElementById('errorPlaceholder');
+            if (ep) { ep.style.display = 'block';
+                ep.innerHTML = `<strong>⚠️ 异步错误</strong><br>${event.reason?.message || '未知错误'}`; }
+        });
 
         // ================================================================
-        //  主程序（自执行，避免污染）
+        //  存储工具
+        // ================================================================
+        const storage = {
+            _memory: {},
+            _enabled: true,
+            _test() { try { localStorage.setItem('__test__', '1');
+                    localStorage.removeItem('__test__'); return true; } catch (e) { return false; } },
+            init() {
+                this._enabled = this._test();
+                if (!this._enabled) document.getElementById('storageWarning').style.display = 'block';
+                return this._enabled;
+            },
+            getItem(key) {
+                if (this._enabled) { try { return localStorage.getItem(key); } catch (e) { this._enabled = false; } }
+                return this._memory[key] || null;
+            },
+            setItem(key, value) {
+                if (this._enabled) { try { localStorage.setItem(key, value); return; } catch (e) { this._enabled = false; } }
+                this._memory[key] = value;
+            },
+            removeItem(key) {
+                if (this._enabled) { try { localStorage.removeItem(key); return; } catch (e) { this._enabled = false; } }
+                delete this._memory[key];
+            }
+        };
+
+        // ================================================================
+        //  主程序
         // ================================================================
         (function() {
             'use strict';
+            storage.init();
 
             // ================================================================
-            //  1. 网站数据（完整144个）
+            //  1. 网站数据
             // ================================================================
             const defaultSites = [
-                // 搜索
                 { id: 1, name: '百度', url: 'https://www.baidu.com', category: '搜索', color: 'blue' },
                 { id: 2, name: 'Google', url: 'https://www.google.com', category: '搜索', color: 'emerald' },
                 { id: 3, name: '必应', url: 'https://www.bing.com', category: '搜索', color: 'blue' },
                 { id: 4, name: '搜狗', url: 'https://www.sogou.com', category: '搜索', color: 'red' },
                 { id: 5, name: '360搜索', url: 'https://www.so.com', category: '搜索', color: 'green' },
-                // 社交
                 { id: 10, name: '微博', url: 'https://weibo.com', category: '社交', color: 'amber' },
                 { id: 11, name: '知乎', url: 'https://www.zhihu.com', category: '社交', color: 'blue' },
                 { id: 12, name: '微信', url: 'https://wx.qq.com', category: '社交', color: 'green' },
@@ -891,7 +601,6 @@
                 { id: 14, name: '豆瓣', url: 'https://www.douban.com', category: '社交', color: 'green' },
                 { id: 15, name: '小红书', url: 'https://www.xiaohongshu.com', category: '社交', color: 'rose' },
                 { id: 16, name: '贴吧', url: 'https://tieba.baidu.com', category: '社交', color: 'blue' },
-                // 视频
                 { id: 20, name: 'B站', url: 'https://www.bilibili.com', category: '视频', color: 'rose' },
                 { id: 21, name: 'YouTube', url: 'https://www.youtube.com', category: '视频', color: 'red' },
                 { id: 22, name: '抖音', url: 'https://www.douyin.com', category: '视频', color: 'rose' },
@@ -900,7 +609,6 @@
                 { id: 25, name: '爱奇艺', url: 'https://www.iqiyi.com', category: '视频', color: 'green' },
                 { id: 26, name: '腾讯视频', url: 'https://v.qq.com', category: '视频', color: 'cyan' },
                 { id: 27, name: '芒果TV', url: 'https://www.mgtv.com', category: '视频', color: 'amber' },
-                // 购物
                 { id: 30, name: '淘宝', url: 'https://www.taobao.com', category: '购物', color: 'amber' },
                 { id: 31, name: '京东', url: 'https://www.jd.com', category: '购物', color: 'red' },
                 { id: 32, name: '天猫', url: 'https://www.tmall.com', category: '购物', color: 'red' },
@@ -908,7 +616,6 @@
                 { id: 34, name: '苏宁', url: 'https://www.suning.com', category: '购物', color: 'blue' },
                 { id: 35, name: '唯品会', url: 'https://www.vip.com', category: '购物', color: 'rose' },
                 { id: 36, name: '亚马逊', url: 'https://www.amazon.cn', category: '购物', color: 'amber' },
-                // 资讯
                 { id: 40, name: '掘金', url: 'https://juejin.cn', category: '资讯', color: 'blue' },
                 { id: 41, name: '今日头条', url: 'https://www.toutiao.com', category: '资讯', color: 'red' },
                 { id: 42, name: '网易新闻', url: 'https://news.163.com', category: '资讯', color: 'red' },
@@ -917,7 +624,6 @@
                 { id: 45, name: '凤凰网', url: 'https://www.ifeng.com', category: '资讯', color: 'rose' },
                 { id: 46, name: '澎湃新闻', url: 'https://www.thepaper.cn', category: '资讯', color: 'blue' },
                 { id: 47, name: '知乎日报', url: 'https://daily.zhihu.com', category: '资讯', color: 'blue' },
-                // 工具
                 { id: 50, name: 'GitHub', url: 'https://github.com', category: '工具', color: 'purple' },
                 { id: 51, name: 'Gitee', url: 'https://gitee.com', category: '工具', color: 'red' },
                 { id: 52, name: 'Stack Overflow', url: 'https://stackoverflow.com', category: '工具', color: 'amber' },
@@ -928,7 +634,6 @@
                 { id: 57, name: '阿里云', url: 'https://www.aliyun.com', category: '工具', color: 'amber' },
                 { id: 58, name: '腾讯云', url: 'https://cloud.tencent.com', category: '工具', color: 'cyan' },
                 { id: 59, name: 'JSON.cn', url: 'https://www.json.cn', category: '工具', color: 'green' },
-                // 学习
                 { id: 60, name: '慕课网', url: 'https://www.imooc.com', category: '学习', color: 'green' },
                 { id: 61, name: '网易云课堂', url: 'https://study.163.com', category: '学习', color: 'red' },
                 { id: 62, name: '腾讯课堂', url: 'https://ke.qq.com', category: '学习', color: 'cyan' },
@@ -938,7 +643,6 @@
                 { id: 66, name: '牛客网', url: 'https://www.nowcoder.com', category: '学习', color: 'green' },
                 { id: 67, name: 'LeetCode', url: 'https://leetcode.cn', category: '学习', color: 'amber' },
                 { id: 68, name: 'W3School', url: 'https://www.w3school.com.cn', category: '学习', color: 'green' },
-                // 常用
                 { id: 70, name: '网易云', url: 'https://music.163.com', category: '常用', color: 'rose' },
                 { id: 71, name: 'QQ音乐', url: 'https://y.qq.com', category: '常用', color: 'green' },
                 { id: 72, name: '酷狗音乐', url: 'https://www.kugou.com', category: '常用', color: 'blue' },
@@ -949,7 +653,6 @@
                 { id: 77, name: '携程', url: 'https://www.ctrip.com', category: '常用', color: 'blue' },
                 { id: 78, name: '美团', url: 'https://www.meituan.com', category: '常用', color: 'amber' },
                 { id: 79, name: '饿了么', url: 'https://www.ele.me', category: '常用', color: 'blue' },
-                // 书签
                 { id: 1001, name: 'Gmail', url: 'https://mail.google.com/mail/u/0/', category: '我的书签', subCategory: '书签栏',
                     color: 'red' },
                 { id: 1002, name: 'YouTube', url: 'https://www.youtube.com/', category: '我的书签', subCategory: '书签栏',
@@ -1010,7 +713,6 @@
                     color: 'green' },
                 { id: 1038, name: '造作传感', url: 'https://www.creatrol.com', category: '我的书签', subCategory: '品牌官网',
                     color: 'purple' },
-                // 工作网站
                 { id: 1040, name: '朗音智能', url: 'https://www.langyinkj.com', category: '我的书签', subCategory: '工作网站',
                     color: 'blue' },
                 { id: 1041, name: '思创云', url: 'https://www.cetroncloud.cn', category: '我的书签', subCategory: '工作网站',
@@ -1031,7 +733,6 @@
                     color: 'purple' },
                 { id: 1049, name: '电信测速', url: 'https://10000.gd.cn', category: '我的书签', subCategory: '工作网站',
                     color: 'cyan' },
-                // HA-NR-KNX
                 { id: 1050, name: 'ioBroker', url: 'https://www.iobroker.cn', category: '我的书签', subCategory: 'HA-NR-KNX',
                     color: 'blue' },
                 { id: 1051, name: '瀚思彼岸', url: 'https://bbs.hassbian.com', category: '我的书签', subCategory: 'HA-NR-KNX',
@@ -1062,7 +763,6 @@
                     color: 'blue' },
                 { id: 1064, name: '凌豫实业', url: 'https://www.lingyushiye.com', category: '我的书签', subCategory: 'HA-NR-KNX',
                     color: 'red' },
-                // 学习进修
                 { id: 1070, name: '上海政府', url: 'https://www.shanghai.gov.cn', category: '我的书签', subCategory: '学习进修',
                     color: 'red' },
                 { id: 1071, name: '开放大学', url: 'https://www.sou.edu.cn', category: '我的书签', subCategory: '学习进修',
@@ -1101,7 +801,6 @@
                     color: 'purple' },
                 { id: 1088, name: '一网通办', url: 'https://zwdt.sh.gov.cn', category: '我的书签', subCategory: '学习进修',
                     color: 'blue' },
-                // 技术文档
                 { id: 1090, name: 'HA文档', url: 'https://www.home-assistant.io/docs', category: '我的书签',
                     subCategory: '技术文档', color: 'blue' },
                 { id: 1091, name: 'KNX集成', url: 'https://www.home-assistant.io/integrations/knx', category: '我的书签',
@@ -1136,11 +835,13 @@
                 green: 'from-green-400 to-emerald-600'
             };
 
+            const TIAN_API_KEY = 'b904d1a9d96f65510a991411c755ffa8';
+
             // ================================================================
-            //  3. 本地存储
+            //  3. 网站数据操作
             // ================================================================
             function loadSites() {
-                const stored = localStorage.getItem('cyberNavSites');
+                const stored = storage.getItem('cyberNavSites');
                 if (stored) {
                     try {
                         const parsed = JSON.parse(stored);
@@ -1157,473 +858,150 @@
             }
 
             function saveSites() {
-                localStorage.setItem('cyberNavSites', JSON.stringify(sites));
+                storage.setItem('cyberNavSites', JSON.stringify(sites));
                 document.getElementById('siteCount').textContent = sites.length;
             }
 
             // ================================================================
-            //  4. 农历 + 节假日核心模块（在线API + 内置降级）
+            //  4. 老黄历API（天行API 45号）
             // ================================================================
-            
-            // 检查 lunar-javascript 是否成功加载
-            if (typeof window.Lunar === 'undefined' || !window.Lunar) {
-                console.warn('⚠️ lunar-javascript CDN 加载失败，将不显示黄历宜忌');
-            } else {
-                console.log('✅ lunar-javascript 库已加载', {
-                    version: window.Lunar.VERSION || 'unknown',
-                    hasFromYmd: typeof window.Lunar.fromYmd === 'function'
-                });
-            }
-            
-            // 缓存已获取的节假日数据
-            const holidayCache = {};
-            
-            // 从 Timor API 获取节假日信息（免费、无需key）
-            async function fetchHolidayData(year) {
-                if (holidayCache[year]) {
-                    return holidayCache[year];
-                }
-                
-                try {
-                    // Timor API - 开源免费的节假日API
-                    const url = `https://timor.tech/api/holiday/year/${year}`;
-                    console.log(`🌐 请求API: ${url}`);
-                    
-                    const response = await fetch(url);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    
-                    // 调试：输出API原始数据结构
-                    console.log('📡 Timor API 原始响应:', {
-                        year: data.year,
-                        hasHoliday: !!data.holiday,
-                        holidayType: typeof data.holiday,
-                        sampleKeys: data.holiday ? Object.keys(data.holiday).slice(0, 3) : [],
-                        sampleData: data.holiday ? Object.entries(data.holiday)[0] : null,
-                        isDirectObject: !data.year && !data.holiday, // 检查是否直接是日期对象
-                        fullData: JSON.stringify(data).substring(0, 500)
-                    });
-                    
-                    // 解析API返回的数据
-                    const holidays = {};
-                    const workdays = {};
-                    
-                    // Timor API 可能返回两种格式：
-                    // 格式1: { year: 2026, holiday: { '2026-01-01': {...} } }
-                    // 格式2: { '2026-01-01': {...}, '2026-01-02': {...} }
-                    
-                    let holidayList = {};
-                    if (data.holiday) {
-                        // 格式1
-                        holidayList = data.holiday;
-                    } else if (!data.year && typeof data === 'object') {
-                        // 格式2 - 直接是日期对象
-                        holidayList = data;
-                    }
-                    
-                    for (const [dateStr, info] of Object.entries(holidayList)) {
-                        if (info && typeof info === 'object') {
-                            // 输出所有字段的键名，帮助调试
-                            if (Object.keys(holidays).length === 0 && Object.keys(workdays).length === 0) {
-                                console.log('🔑 API字段名:', Object.keys(info));
-                                console.log('📊 API完整数据示例:', JSON.stringify(info));
-                            }
-                            
-                            // Timor API 可能有多种字段名
-                            const isHoliday = info.holiday || info.isHoliday || info.type === 'holiday' || info.status === 'holiday';
-                            const isWorkday = info.workday || info.isWorkday || info.type === 'workday' || info.status === 'workday';
-                            const name = info.name || info.title || info.desc || '';
-                            
-                            if (isHoliday) {
-                                // 是节假日
-                                holidays[dateStr] = name || '节日';
-                            } else if (isWorkday) {
-                                // 是调休上班
-                                workdays[dateStr] = '上班';
-                            }
-                            
-                            // 调试：输出第一个数据的结构
-                            if (Object.keys(holidays).length === 1 || Object.keys(workdays).length === 1) {
-                                console.log('📋 API数据字段示例:', {
-                                    dateStr,
-                                    info,
-                                    isHoliday,
-                                    isWorkday,
-                                    extractedName: name
-                                });
-                            }
-                        }
-                    }
-                    
-                    const result = { holidays, workdays };
-                    holidayCache[year] = result;
-                    console.log(`✅ ${year}年节假日数据加载成功`);
-                    return result;
-                } catch (error) {
-                    console.warn(`⚠️ ${year}年节假日API获取失败，使用内置数据`, error);
-                    return null;
-                }
-            }
-            
-            // 获取某一天的节假日信息（优先在线，降级内置）
-            async function getHolidayInfo(year, month, day) {
-                // Timor API 使用 'MM-DD' 格式
-                const dateStrShort = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const dateStrFull = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                
-                // 先尝试从在线API获取节假日信息
-                const onlineData = await fetchHolidayData(year);
-                
-                let holidayName = null;
-                let isWorkday = false;
-                
-                if (onlineData) {
-                    // 检查是否是在线数据中的节假日（使用 MM-DD 格式）
-                    if (onlineData.holidays[dateStrShort]) {
-                        holidayName = onlineData.holidays[dateStrShort];
-                    }
-                    
-                    // 检查是否是在线数据中的调休上班
-                    if (onlineData.workdays[dateStrShort]) {
-                        isWorkday = true;
-                    }
-                }
-                
-                // 如果在线API没有调休信息，使用内置数据补充
-                if (!isWorkday) {
-                    const backupInfo = getWorkDayBackup(year, month, day);
-                    if (backupInfo === '上班') {
-                        isWorkday = true;
-                    } else if (backupInfo && !holidayName) {
-                        // 如果内置数据有节假日名称，且在线API没有，则使用内置的
-                        holidayName = backupInfo;
-                    }
-                }
-                
-                // 调试：输出今天的信息
-                if (year === new Date().getFullYear() && month === new Date().getMonth() + 1 && day === new Date().getDate()) {
-                    console.log('🔍 API数据检查:', {
-                        dateStrShort,
-                        dateStrFull,
-                        holidayName,
-                        isWorkday,
-                        onlineHolidays: onlineData ? Object.keys(onlineData.holidays).length : 0,
-                        onlineWorkdays: onlineData ? Object.keys(onlineData.workdays).length : 0
-                    });
-                }
-                
-                // 返回结果
-                if (isWorkday) {
-                    return '上班';
-                } else if (holidayName) {
-                    return holidayName;
-                }
-                return null;
-            }
-            
-            // lunar-javascript 库已通过 CDN 加载，直接使用全局 Lunar 对象
-            let ChineseDays = null; // 不使用外部库
-            let cdInstance = null;
+            const HUANGLI_API_URL = 'https://apis.tianapi.com/lunar/index';
 
-            // ---- 统一接口（异步版本） ----
-            async function getLunarInfo(year, month, day) {
-                const date = new Date(year, month - 1, day);
-                const result = {
-                    lunarYear: '',
-                    lunarMonth: '',
-                    lunarDay: '',
-                    full: '',
-                    solarTerm: '',
-                    festivals: [],
-                    solarFestivals: [],
-                    yi: [],
-                    ji: [],
-                    displayTags: [],
-                    tagClasses: [],
-                    isWorkday: false,
-                    isHoliday: false,
-                    // 新增黄历详细信息
-                    chongSha: '',      // 冲煞
-                    xiShen: '',        // 喜神方位
-                    caiShen: '',       // 财神方位
-                    fuShen: '',        // 福神方位
-                    pengZu: '',        // 彭祖百忌
-                    jianChu: '',       // 建除十二神
-                    xingXiu: '',       // 二十八星宿
-                    wuXing: '',        // 五行纳音
-                    ganZhi: {          // 干支
-                        year: '',
-                        month: '',
-                        day: ''
-                    }
-                };
-
-                // ---- 1. 使用 lunar-javascript 获取农历和节气 ----
-                if (typeof window.Lunar !== 'undefined' && window.Lunar) {
-                    // 使用 lunar-javascript 库
-                    const solar = window.Solar.fromYmd(year, month, day);
-                    const lunar = solar.getLunar();
-                    
-                    // 农历信息
-                    result.lunarYear = lunar.getYearInGanZhi() + '年【' + lunar.getYearShengXiao() + '年】';
-                        result.lunarMonth = (lunar.getMonthInChinese());
-                        result.lunarDay = lunar.getDayInChinese();
-                        result.full = lunar.toFullString();
-                        
-                        // 节气（lunar-javascript 自动计算）
-                        const jieQi = lunar.getJieQi();
-                        result.solarTerm = jieQi || '';
-                        
-                        // ===== 新增：黄历详细信息 =====
-                        try {
-                            // 冲煞
-                            result.chongSha = lunar.getDayChongDesc ? lunar.getDayChongDesc() : '';
-                            
-                            // 吉神方位
-                            result.xiShen = lunar.getPositionXiDesc ? lunar.getPositionXiDesc() : '';
-                            result.caiShen = lunar.getPositionCaiDesc ? lunar.getPositionCaiDesc() : '';
-                            result.fuShen = lunar.getPositionFuDesc ? lunar.getPositionFuDesc() : '';
-                            
-                            // 彭祖百忌
-                            const pengZuGan = lunar.getPengZuGan ? lunar.getPengZuGan() : '';
-                            const pengZuZhi = lunar.getPengZuZhi ? lunar.getPengZuZhi() : '';
-                            result.pengZu = (pengZuGan && pengZuZhi) ? (pengZuGan + ' ' + pengZuZhi) : '';
-                            
-                            // 建除十二神（尝试多种方法名）
-                            result.jianChu = lunar.getDayJianChu ? lunar.getDayJianChu() : 
-                                           lunar.getJianChu ? lunar.getJianChu() : '';
-                            
-                            // 二十八星宿
-                            const xiu = lunar.getXiu ? lunar.getXiu() : '';
-                            const xiuLuck = lunar.getXiuLuck ? lunar.getXiuLuck() : '';
-                            result.xingXiu = (xiu && xiuLuck) ? (xiu + '(' + xiuLuck + ')') : xiu;
-                            
-                            // 五行纳音
-                            result.wuXing = lunar.getDayNaYin ? lunar.getDayNaYin() : 
-                                          lunar.getNaYin ? lunar.getNaYin() : '';
-                            
-                            // 干支
-                            result.ganZhi.year = lunar.getYearInGanZhi ? lunar.getYearInGanZhi() : '';
-                            result.ganZhi.month = lunar.getMonthInGanZhi ? lunar.getMonthInGanZhi() : '';
-                            result.ganZhi.day = lunar.getDayInGanZhi ? lunar.getDayInGanZhi() : '';
-                        } catch (e) {
-                            console.warn('⚠️ 部分黄历信息获取失败:', e);
-                        }
-                        
-                        // 调试输出
-                        if (year === new Date().getFullYear() && month === new Date().getMonth() + 1 && day === new Date().getDate()) {
-                            console.log('📅 今日农历（lunar-javascript）:', result.full);
-                            if (result.solarTerm) {
-                                console.log('🌿 今日节气:', result.solarTerm);
-                            }
-                            console.log('🔮 今日黄历详情:', {
-                                冲煞: result.chongSha,
-                                喜神: result.xiShen,
-                                财神: result.caiShen,
-                                福神: result.fuShen,
-                                建除: result.jianChu,
-                                星宿: result.xingXiu,
-                                纳音: result.wuXing
-                            });
-                        }
-                } else {
-                    // lunar-javascript 未加载，返回错误信息
-                    console.error('❌ lunar-javascript 库未加载，无法获取农历信息');
-                    return null;
-                }
-
-                // ---- 2. 补充一些传统节日（农历节日） ----
-                let lunarMonthNum = 0,
-                    lunarDayNum = 0;
-                
-                // 优先使用 lunar-javascript 的数据
-                if (typeof window.Lunar !== 'undefined' && window.Lunar) {
-                    try {
-                        const solar = window.Solar.fromYmd(year, month, day);
-                        const lunarObj = solar.getLunar();
-                        lunarMonthNum = lunarObj.getMonth();
-                        lunarDayNum = lunarObj.getDay();
-                    } catch (e) {
-                        // 降级到内置算法
-                        try {
-                            const lunar = solarToLunarBack(date);
-                            lunarMonthNum = lunar.month;
-                            lunarDayNum = lunar.day;
-                        } catch (e2) {}
-                    }
-                } else {
-                    // 使用内置算法
-                    try {
-                        const lunar = solarToLunarBack(date);
-                        lunarMonthNum = lunar.month;
-                        lunarDayNum = lunar.day;
-                    } catch (e) {}
-                }
-                
-                if (lunarMonthNum === 1 && lunarDayNum === 1) result.festivals.push('春节');
-                if (lunarMonthNum === 5 && lunarDayNum === 5) result.festivals.push('端午');
-                if (lunarMonthNum === 8 && lunarDayNum === 15) result.festivals.push('中秋');
-                if (lunarMonthNum === 1 && lunarDayNum === 15) result.festivals.push('元宵');
-                if (lunarMonthNum === 7 && lunarDayNum === 7) result.festivals.push('七夕');
-                if (lunarMonthNum === 9 && lunarDayNum === 9) result.festivals.push('重阳');
-                if (lunarMonthNum === 12 && lunarDayNum === 8) result.festivals.push('腊八');
-                if (lunarMonthNum === 12 && lunarDayNum === 23) result.festivals.push('小年');
-
-                // ---- 3. 公历节日（补充） ----
-                const gregHolidays = {
-                    '1-1': '元旦',
-                    '2-14': '情人节',
-                    '3-8': '妇女节',
-                    '5-1': '劳动节',
-                    '6-1': '儿童节',
-                    '10-1': '国庆节',
-                    '12-25': '圣诞节'
-                };
-                const gKey = `${month}-${day}`;
-                if (gregHolidays[gKey]) result.festivals.push(gregHolidays[gKey]);
-
-                // ---- 4. 构建显示标签 ----
-                const tags = [];
-                const classes = [];
-                
-                // 1. 先添加调休/节假日信息（优先在线API）
-                const holidayInfo = await getHolidayInfo(year, month, day);
-                if (holidayInfo === '上班') {
-                    // 调休补班
-                    tags.push('调休补班');
-                    classes.push('tag-work');
-                    result.isWorkday = true;
-                } else if (holidayInfo) {
-                    // 是节假日，显示"放假"
-                    tags.push('放假');
-                    classes.push('tag-holiday');
-                    result.isHoliday = true;
-                }
-                
-                // 2. 再添加传统节日
-                if (result.festivals.length > 0) {
-                    const unique = [...new Set(result.festivals)];
-                    unique.forEach(f => {
-                        // 避免重复添加
-                        if (!tags.includes(f)) {
-                            tags.push(f);
-                            classes.push('tag-holiday');
-                        }
-                    });
-                }
-                
-                // 3. 最后添加节气
-                if (result.solarTerm && !tags.includes(result.solarTerm)) {
-                    tags.push(result.solarTerm);
-                    classes.push('tag-solar');
-                }
-
-                // 如果没有任何标签，但已经有节日/节气/调休信息，我们已有显示
-                // 去重
-                const uniqueTags = [];
-                const uniqueClasses = [];
-                const seen = new Set();
-                for (let i = 0; i < tags.length; i++) {
-                    if (!seen.has(tags[i])) {
-                        seen.add(tags[i]);
-                        uniqueTags.push(tags[i]);
-                        uniqueClasses.push(classes[i] || 'tag-other');
-                    }
-                }
-                result.displayTags = uniqueTags;
-                result.tagClasses = uniqueClasses;
-                
-                // 调试：输出今天的标签信息
-                if (year === new Date().getFullYear() && month === new Date().getMonth() + 1 && day === new Date().getDate()) {
-                    console.log('📅 今日标签:', uniqueTags.length > 0 ? uniqueTags.join(', ') : '无');
-                }
-
-                // ---- 6. 宜忌（使用 lunar-javascript 真实黄历数据） ----
-                try {
-                    // 检查 Lunar 对象是否存在且可用
-                    if (typeof window.Lunar !== 'undefined' && window.Lunar && typeof window.Lunar.fromYmd === 'function') {
-                        // 使用 lunar-javascript 库获取真实黄历宜忌
-                        const lunar = window.Lunar.fromYmd(year, month, day);
-                        result.yi = lunar.getDayYi(); // 今日宜
-                        result.ji = lunar.getDayJi(); // 今日忌
-                        
-                        // 调试输出
-                        if (year === new Date().getFullYear() && month === new Date().getMonth() + 1 && day === new Date().getDate()) {
-                            console.log('📜 今日宜忌（lunar-javascript）:', {
-                                宜: result.yi.join('、'),
-                                忌: result.ji.join('、')
-                            });
-                        }
-                    } else {
-                        console.warn('⚠️ lunar-javascript 未正确加载', {
-                            hasWindowLunar: typeof window.Lunar !== 'undefined',
-                            lunarIsNull: window.Lunar === null,
-                            hasFromYmd: window.Lunar ? typeof window.Lunar.fromYmd === 'function' : false
-                        });
-                        result.yi = [];
-                        result.ji = [];
-                    }
-                } catch (e) {
-                    console.error('❌ 黄历宜忌计算失败:', e);
-                    result.yi = [];
-                    result.ji = [];
-                }
-
-                return result;
-            }
-
-            // 内置调休数据（2025-2027年完整数据）
-            const workDaysBackup = {
-                // 2025年
-                '2025-1-1': '元旦',
-                '2025-1-28': '春节', '2025-1-29': '春节', '2025-1-30': '春节', '2025-1-31': '春节',
-                '2025-2-1': '春节', '2025-2-2': '春节', '2025-2-3': '春节',
-                '2025-4-4': '清明', '2025-4-5': '清明', '2025-4-6': '清明',
-                '2025-5-1': '劳动节', '2025-5-2': '劳动节', '2025-5-3': '劳动节', '2025-5-4': '劳动节', '2025-5-5': '劳动节',
-                '2025-5-31': '端午', '2025-6-1': '端午', '2025-6-2': '端午',
-                '2025-10-1': '国庆', '2025-10-2': '国庆', '2025-10-3': '国庆', '2025-10-4': '国庆',
-                '2025-10-5': '国庆', '2025-10-6': '国庆', '2025-10-7': '国庆', '2025-10-8': '国庆',
-                '2025-1-26': '上班', '2025-2-8': '上班', '2025-4-27': '上班',
-                '2025-5-11': '上班', '2025-9-28': '上班', '2025-10-11': '上班',
-                
-                // 2026年
-                '2026-1-1': '元旦', '2026-1-2': '元旦', '2026-1-3': '元旦',
-                '2026-2-17': '春节', '2026-2-18': '春节', '2026-2-19': '春节',
-                '2026-2-20': '春节', '2026-2-21': '春节', '2026-2-22': '春节', '2026-2-23': '春节',
-                '2026-4-5': '清明', '2026-4-6': '清明', '2026-4-7': '清明',
-                '2026-5-1': '劳动节', '2026-5-2': '劳动节', '2026-5-3': '劳动节',
-                '2026-5-4': '劳动节', '2026-5-5': '劳动节',
-                '2026-6-19': '端午', '2026-6-20': '端午', '2026-6-21': '端午',
-                '2026-10-1': '国庆', '2026-10-2': '国庆', '2026-10-3': '国庆',
-                '2026-10-4': '国庆', '2026-10-5': '国庆', '2026-10-6': '国庆', '2026-10-7': '国庆',
-                '2026-2-15': '上班', '2026-2-28': '上班', '2026-4-19': '上班',
-                '2026-5-9': '上班', '2026-9-27': '上班', '2026-10-10': '上班',
-                
-                // 2027年
-                '2027-1-1': '元旦', '2027-1-2': '元旦', '2027-1-3': '元旦',
-                '2027-2-6': '春节', '2027-2-7': '春节', '2027-2-8': '春节',
-                '2027-2-9': '春节', '2027-2-10': '春节', '2027-2-11': '春节', '2027-2-12': '春节',
-                '2027-4-5': '清明', '2027-4-6': '清明', '2027-4-7': '清明',
-                '2027-5-1': '劳动节', '2027-5-2': '劳动节', '2027-5-3': '劳动节',
-                '2027-5-4': '劳动节', '2027-5-5': '劳动节',
-                '2027-6-9': '端午', '2027-6-10': '端午', '2027-6-11': '端午',
-                '2027-10-1': '国庆', '2027-10-2': '国庆', '2027-10-3': '国庆',
-                '2027-10-4': '国庆', '2027-10-5': '国庆', '2027-10-6': '国庆', '2027-10-7': '国庆',
-                '2027-2-21': '上班', '2027-4-11': '上班', '2027-4-25': '上班',
-                '2027-5-15': '上班', '2027-9-19': '上班', '2027-10-9': '上班'
+            let huangliData = {
+                lunarDate: '--',
+                lunarDay: '--',
+                lunarMonth: '--',
+                lunarYear: '--',
+                shengxiao: '--',
+                fitness: '--',
+                taboo: '--',
+                chongsha: '--',
+                pengzu: '--',
+                xingsu: '--',
+                shenwei: '--',
+                taishen: '--',
+                jianshen: '--',
+                festival: '--',
+                lunarFestival: '--',
+                tiangandizhi: { year: '--', month: '--', day: '--' },
+                wuxing: { year: '--', month: '--', day: '--' },
+                gregoriandate: '--',
+                apiStatus: 'loading'
             };
 
-            function getWorkDayBackup(year, month, day) {
-                return workDaysBackup[`${year}-${month}-${day}`] || '';
+            function updateHuangliApiStatus(status, msg) {
+                const el = document.getElementById('huangliApiStatus');
+                if (!el) return;
+                el.className = `api-status ${status}`;
+                if (status === 'success') {
+                    el.innerHTML = `<span class="dot"></span>黄历 ${msg || '已更新'}`;
+                } else if (status === 'error') {
+                    el.innerHTML = `<span class="dot"></span>黄历 ${msg || '获取失败'}`;
+                } else {
+                    el.innerHTML = `<span class="dot"></span>黄历 ${msg || '加载中'}`;
+                }
+            }
+
+            async function fetchHuangli(dateStr) {
+                updateHuangliApiStatus('loading', '请求中...');
+
+                try {
+                    const date = dateStr || new Date().toISOString().split('T')[0];
+                    const url = `${HUANGLI_API_URL}?key=${TIAN_API_KEY}&date=${date}`;
+                    const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+                    if (data.code !== 200) throw new Error(`API错误 (${data.code}): ${data.msg}`);
+
+                    const result = data.result;
+                    if (!result) throw new Error('数据为空');
+
+                    huangliData = {
+                        lunarDate: result.lunardate || '--',
+                        lunarDay: result.lunarday || '--',
+                        lunarMonth: result.lubarmonth || '--',
+                        lunarYear: `${result.tiangandizhiyear || '--'}【${result.shengxiao || '--'}年】`,
+                        shengxiao: result.shengxiao || '--',
+                        fitness: result.fitness || '--',
+                        taboo: result.taboo || '--',
+                        chongsha: result.chongsha || '--',
+                        pengzu: result.pengzu || '--',
+                        xingsu: result.xingsu || '--',
+                        shenwei: result.shenwei || '--',
+                        taishen: result.taishen || '--',
+                        jianshen: result.jianshen || '--',
+                        festival: result.festival || '--',
+                        lunarFestival: result.lunar_festival || '--',
+                        tiangandizhi: {
+                            year: result.tiangandizhiyear || '--',
+                            month: result.tiangandizhimonth || '--',
+                            day: result.tiangandizhiday || '--'
+                        },
+                        wuxing: {
+                            year: result.wuxingnayear || '--',
+                            month: result.wuxingnamonth || '--',
+                            day: result.wuxingjiazi || '--'
+                        },
+                        gregoriandate: result.gregoriandate || '--',
+                        apiStatus: 'success'
+                    };
+
+                    updateHuangliApiStatus('success', `${huangliData.lunarMonth}${huangliData.lunarDay}`);
+                    renderHuangli();
+
+                    storage.setItem('huangliCache', JSON.stringify({
+                        timestamp: Date.now(),
+                        data: huangliData,
+                        date: date
+                    }));
+
+                } catch (error) {
+                    console.warn('⚠️ 老黄历API失败:', error.message);
+                    huangliData.apiStatus = 'error';
+                    updateHuangliApiStatus('error', error.message);
+
+                    const cached = storage.getItem('huangliCache');
+                    if (cached) {
+                        try {
+                            const cache = JSON.parse(cached);
+                            huangliData = cache.data;
+                            renderHuangli();
+                            return;
+                        } catch (e) {}
+                    }
+                    renderHuangli();
+                }
+            }
+
+            function renderHuangli() {
+                const data = huangliData;
+                const lunarDateEl = document.getElementById('lunarDate');
+
+                if (lunarDateEl) {
+                    if (data.lunarYear !== '--' && data.lunarMonth !== '--' && data.lunarDay !== '--') {
+                        lunarDateEl.textContent = `${data.lunarYear} ${data.lunarMonth}月${data.lunarDay}`;
+                    } else {
+                        lunarDateEl.textContent = '农历 --';
+                    }
+                }
+
+                const yiEl = document.getElementById('yiText');
+                const jiEl = document.getElementById('jiText');
+                if (yiEl) {
+                    const yiText = data.fitness !== '--' ? data.fitness.replace(/\./g, '、').replace(/,/g, '、') : '无';
+                    yiEl.textContent = yiText.length > 24 ? yiText.substring(0, 24) + '…' : yiText;
+                }
+                if (jiEl) {
+                    const jiText = data.taboo !== '--' ? data.taboo.replace(/\./g, '、').replace(/,/g, '、') : '无';
+                    jiEl.textContent = jiText.length > 24 ? jiText.substring(0, 24) + '…' : jiText;
+                }
             }
 
             // ================================================================
-            //  5. 天气（固定上海）
+            //  5. 天气 - 天行API（72号）
             // ================================================================
+            const WEATHER_API_URL = 'https://apis.tianapi.com/tianqi/index';
+
             let weatherData = {
                 temp: '--',
                 desc: '加载中...',
@@ -1632,112 +1010,147 @@
                 wind: '--',
                 city: '上海',
                 updateTime: '--',
-                daily: []
+                daily: [],
+                aqi: '--',
+                quality: '--',
+                apiStatus: 'loading'
             };
 
-            async function fetchRealWeather() {
-                const lat = 31.23,
-                    lon = 121.47,
-                    city = '上海';
+            function updateWeatherApiStatus(status, msg) {
+                const el = document.getElementById('weatherApiStatus');
+                if (!el) return;
+                el.className = `api-status ${status}`;
+                if (status === 'success') {
+                    el.innerHTML = `<span class="dot"></span>天气 ${msg || '已更新'}`;
+                } else if (status === 'error') {
+                    el.innerHTML = `<span class="dot"></span>天气 ${msg || '获取失败'}`;
+                } else {
+                    el.innerHTML = `<span class="dot"></span>天气 ${msg || '加载中'}`;
+                }
+            }
+
+            function getWeatherIcon(weatherText) {
+                const map = {
+                    '晴': 'fa-sun-o',
+                    '多云': 'fa-cloud',
+                    '阴': 'fa-cloud',
+                    '小雨': 'fa-umbrella',
+                    '中雨': 'fa-umbrella',
+                    '大雨': 'fa-umbrella',
+                    '暴雨': 'fa-umbrella',
+                    '雷阵雨': 'fa-bolt',
+                    '小雪': 'fa-snowflake-o',
+                    '中雪': 'fa-snowflake-o',
+                    '大雪': 'fa-snowflake-o',
+                    '雾': 'fa-cloud',
+                    '霾': 'fa-cloud',
+                    '晴转多云': 'fa-cloud',
+                    '多云转晴': 'fa-cloud'
+                };
+                for (const [key, val] of Object.entries(map)) {
+                    if (weatherText && weatherText.includes(key)) {
+                        return val;
+                    }
+                }
+                return 'fa-cloud';
+            }
+
+            async function fetchWeather() {
+                updateWeatherApiStatus('loading', '请求中...');
+
                 try {
-                    const url =
-                        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,weathercode&hourly=relative_humidity_2m,wind_speed_10m&timezone=Asia/Shanghai&forecast_days=7`;
-                    const resp = await fetch(url);
-                    if (!resp.ok) throw new Error('API 响应失败');
-                    const raw = await resp.json();
-                    const current = raw.current_weather;
-                    const wCodes = {
-                        0: '晴',
-                        1: '晴',
-                        2: '多云',
-                        3: '多云',
-                        45: '雾',
-                        48: '雾',
-                        51: '小雨',
-                        53: '中雨',
-                        55: '大雨',
-                        61: '小雨',
-                        63: '中雨',
-                        65: '大雨',
-                        71: '小雪',
-                        73: '中雪',
-                        75: '大雪',
-                        80: '阵雨',
-                        81: '中阵雨',
-                        82: '强阵雨',
-                        85: '阵雪',
-                        86: '强阵雪',
-                        95: '雷暴',
-                        96: '雷暴',
-                        99: '强雷暴'
-                    };
-                    const wIcons = {
-                        '晴': 'fa-sun-o',
-                        '多云': 'fa-cloud',
-                        '雾': 'fa-cloud',
-                        '小雨': 'fa-umbrella',
-                        '中雨': 'fa-umbrella',
-                        '大雨': 'fa-umbrella',
-                        '小雪': 'fa-snowflake-o',
-                        '中雪': 'fa-snowflake-o',
-                        '大雪': 'fa-snowflake-o',
-                        '阵雨': 'fa-umbrella',
-                        '中阵雨': 'fa-umbrella',
-                        '强阵雨': 'fa-umbrella',
-                        '阵雪': 'fa-snowflake-o',
-                        '强阵雪': 'fa-snowflake-o',
-                        '雷暴': 'fa-bolt',
-                        '强雷暴': 'fa-bolt'
-                    };
-                    const code = current.weathercode;
-                    const desc = wCodes[code] || '未知';
-                    const icon = wIcons[desc] || 'fa-question-circle';
+                    const realUrl = `${WEATHER_API_URL}?key=${TIAN_API_KEY}&city=上海&type=1`;
+                    const realResp = await fetch(realUrl, { signal: AbortSignal.timeout(8000) });
+                    if (!realResp.ok) throw new Error(`HTTP ${realResp.status}`);
+                    const realData = await realResp.json();
+                    if (realData.code !== 200) throw new Error(`API错误 (${realData.code}): ${realData.msg}`);
 
-                    let humidity = '--',
-                        wind = '--';
-                    try {
-                        const idx = raw.hourly.time.findIndex(t => t >= current.time);
-                        if (idx >= 0) {
-                            humidity = raw.hourly.relative_humidity_2m[idx] + '%';
-                            wind = raw.hourly.wind_speed_10m[idx] + ' km/h';
-                        }
-                    } catch (e) {}
+                    const result = realData.result;
+                    if (!result) throw new Error('数据为空');
 
+                    const temp = result.real || '--';
+                    const weather = result.weather || '未知';
+                    const humidity = result.humidity || '--';
+                    const wind = result.wind || '--';
+                    const windsc = result.windsc || '--';
+                    const quality = result.quality || '--';
+                    const aqi = result.aqi || '--';
+                    const area = result.area || '上海';
+
+                    const forecastUrl = `${WEATHER_API_URL}?key=${TIAN_API_KEY}&city=上海&type=7`;
+                    const forecastResp = await fetch(forecastUrl, { signal: AbortSignal.timeout(8000) });
+                    const forecastData = await forecastResp.json();
                     const daily = [];
-                    if (raw.daily) {
-                        const days = raw.daily.time.length;
-                        for (let i = 0; i < days && i < 7; i++) {
-                            const d = new Date(raw.daily.time[i]);
-                            const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-                            const dayName = i === 0 ? '今天' : weekdays[d.getDay()];
-                            const maxT = raw.daily.temperature_2m_max[i];
-                            const minT = raw.daily.temperature_2m_min[i];
-                            const wCode = raw.daily.weathercode[i];
-                            const wDesc = wCodes[wCode] || '未知';
-                            const wIcon = wIcons[wDesc] || 'fa-cloud';
+                    if (forecastData.code === 200 && forecastData.result && forecastData.result.list) {
+                        const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+                        forecastData.result.list.forEach((item, index) => {
+                            const dayName = index === 0 ? '今天' : item.week || weekdays[index % 7];
+                            const maxT = item.highest ? parseInt(item.highest) : 0;
+                            const minT = item.lowest ? parseInt(item.lowest) : 0;
+                            const wDesc = item.weather || '未知';
+                            const wIcon = getWeatherIcon(wDesc);
                             daily.push({
                                 day: dayName,
-                                date: `${d.getMonth()+1}/${d.getDate()}`,
-                                max: Math.round(maxT),
-                                min: Math.round(minT),
+                                date: item.date || `${index+1}/${1}`,
+                                max: maxT,
+                                min: minT,
                                 desc: wDesc,
                                 icon: wIcon
+                            });
+                        });
+                    }
+                    if (daily.length === 0) {
+                        const weekdays = ['今天', '明天', '后天', '周四', '周五', '周六', '周日'];
+                        const descs = ['晴', '多云', '阴', '小雨', '晴转多云', '多云转阴', '阵雨'];
+                        const icons = ['fa-sun-o', 'fa-cloud', 'fa-cloud', 'fa-umbrella', 'fa-sun-o', 'fa-cloud',
+                            'fa-umbrella'
+                        ];
+                        for (let i = 0; i < 7; i++) {
+                            daily.push({
+                                day: weekdays[i],
+                                date: `${i+1}/1`,
+                                max: 20 + Math.floor(Math.random() * 10),
+                                min: 15 + Math.floor(Math.random() * 8),
+                                desc: descs[i % descs.length],
+                                icon: icons[i % icons.length]
                             });
                         }
                     }
 
                     weatherData = {
-                        temp: Math.round(current.temperature) + '°C',
-                        desc: desc,
-                        icon: icon,
-                        humidity: humidity,
-                        wind: wind,
-                        city: city,
+                        temp: temp,
+                        desc: `${weather} · ${area}`,
+                        icon: getWeatherIcon(weather),
+                        humidity: humidity ? `${humidity}%` : '--',
+                        wind: wind && windsc ? `${wind} ${windsc}` : (wind || '--'),
+                        city: area,
                         updateTime: new Date().toLocaleTimeString('zh-CN'),
-                        daily: daily
+                        daily: daily,
+                        aqi: aqi,
+                        quality: quality,
+                        apiStatus: 'success'
                     };
-                } catch (e) {
-                    console.warn('天气获取失败，使用模拟数据', e);
+
+                    updateWeatherApiStatus('success', `${weather} ${temp}`);
+                    renderWeather();
+                    storage.setItem('weatherCache', JSON.stringify({ timestamp: Date.now(), data: weatherData }));
+
+                } catch (error) {
+                    console.warn('⚠️ 天气API失败:', error.message);
+                    weatherData.apiStatus = 'error';
+                    updateWeatherApiStatus('error', error.message);
+
+                    const cached = storage.getItem('weatherCache');
+                    if (cached) {
+                        try {
+                            const cache = JSON.parse(cached);
+                            weatherData = cache.data;
+                            weatherData.updateTime = '缓存数据 (API暂不可用)';
+                            renderWeather();
+                            return;
+                        } catch (e) {}
+                    }
+
                     const mockDaily = [];
                     const weekdays = ['今天', '明天', '后天', '周四', '周五', '周六', '周日'];
                     const descs = ['晴', '多云', '阴', '小雨', '晴转多云', '多云转阴', '阵雨'];
@@ -1756,111 +1169,322 @@
                     }
                     weatherData = {
                         temp: Math.round(20 + Math.random() * 10) + '°C',
-                        desc: '晴',
+                        desc: '晴 · 上海',
                         icon: 'fa-sun-o',
                         humidity: Math.round(40 + Math.random() * 30) + '%',
                         wind: Math.round(5 + Math.random() * 15) + ' km/h',
                         city: '上海',
-                        updateTime: new Date().toLocaleTimeString('zh-CN'),
-                        daily: mockDaily
+                        updateTime: '默认数据 (API不可用)',
+                        daily: mockDaily,
+                        aqi: '--',
+                        quality: '--',
+                        apiStatus: 'error'
                     };
+                    renderWeather();
                 }
-                renderWeather();
             }
 
             function renderWeather() {
                 document.getElementById('weatherTemp').textContent = weatherData.temp;
-                document.getElementById('weatherDesc').textContent = weatherData.desc + ' · ' + weatherData.city;
+                document.getElementById('weatherDesc').textContent = weatherData.desc;
                 document.getElementById('weatherIcon').innerHTML = `<i class="fa ${weatherData.icon}"></i>`;
                 document.getElementById('weatherHumidity').textContent = '湿度 ' + weatherData.humidity;
                 document.getElementById('weatherWind').textContent = '风速 ' + weatherData.wind;
                 document.getElementById('weatherUpdate').textContent = '更新于 ' + weatherData.updateTime;
-                
-                // 渲染7天预报小图标
-                const forecastContainer = document.getElementById('weatherForecast7Days');
-                if (forecastContainer && weatherData.daily && weatherData.daily.length > 0) {
+
+                const fc = document.getElementById('weatherForecast7Days');
+                if (fc && weatherData.daily && weatherData.daily.length > 0) {
                     let html = '';
-                    weatherData.daily.forEach((item, index) => {
+                    weatherData.daily.forEach(item => {
+                        const color = { 'fa-sun-o': '#f59e0b', 'fa-cloud': '#9ca3af', 'fa-umbrella': '#60a5fa',
+                            'fa-snowflake-o': '#93c5fd', 'fa-bolt': '#fbbf24' } [item.icon] || '#9ca3af';
                         html += `
-                            <div class="text-center flex-1">
-                                <div class="text-[10px] text-gray-500">${item.day}</div>
-                                <i class="fa ${item.icon} text-base my-0.5" style="color: ${getWeatherIconColor(item.icon)}"></i>
-                                <div class="text-[10px]">${item.max}°/${item.min}°</div>
+                            <div class="weather-day">
+                                <div class="day-label">${item.day}</div>
+                                <i class="fa ${item.icon} day-icon" style="color:${color}"></i>
+                                <div class="day-temp">${item.max}°/${item.min}°</div>
                             </div>
                         `;
                     });
-                    forecastContainer.innerHTML = html;
+                    fc.innerHTML = html;
                 }
-            }
-            
-            // 根据天气图标返回对应的颜色
-            function getWeatherIconColor(iconClass) {
-                const colorMap = {
-                    'fa-sun-o': '#f59e0b',      // amber-500
-                    'fa-cloud': '#9ca3af',       // gray-400
-                    'fa-umbrella': '#60a5fa',    // blue-400
-                    'fa-snowflake-o': '#93c5fd', // blue-300
-                    'fa-bolt': '#fbbf24'         // amber-400
-                };
-                return colorMap[iconClass] || '#9ca3af';
             }
 
             // ================================================================
-            //  6. 日历渲染
+            //  6. 油价行情 - 天行API（104-2号）
+            // ================================================================
+            const OIL_MARKET_API_URL = 'https://apis.tianapi.com/oilprice/market';
+
+            let oilData = {
+                prices: { '92': '--', '95': '--', '98': '--', '0': '--' },
+                trend: '--',
+                lastAdjusted: '--',
+                nextAdjustment: '--',
+                region: '--',
+                updateTime: '--',
+                source: '--',
+                apiStatus: 'loading'
+            };
+
+            function updateOilApiStatus(status, msg) {
+                const el = document.getElementById('oilApiStatus');
+                if (!el) return;
+                el.className = `api-status ${status}`;
+                if (status === 'success') {
+                    el.innerHTML = `<span class="dot"></span>油价 ${msg || '已更新'}`;
+                } else if (status === 'error') {
+                    el.innerHTML = `<span class="dot"></span>油价 ${msg || '获取失败'}`;
+                } else {
+                    el.innerHTML = `<span class="dot"></span>油价 ${msg || '加载中'}`;
+                }
+            }
+
+            window.forceRefreshOil = async function() {
+                const icon = document.getElementById('oilRefreshIcon');
+                if (icon) { icon.className = 'fa fa-spinner fa-spin text-blue-500'; }
+                updateOilApiStatus('loading', '刷新中...');
+                storage.removeItem('oilPricesCache');
+                await fetchOilPrice();
+                if (icon) {
+                    icon.className = 'fa fa-check text-green-500';
+                    setTimeout(() => { icon.className = 'fa fa-refresh'; }, 1500);
+                }
+            };
+
+            async function fetchOilPrice() {
+                const cached = storage.getItem('oilPricesCache');
+                if (cached) {
+                    try {
+                        const cache = JSON.parse(cached);
+                        if (Date.now() - cache.timestamp < 300000) {
+                            oilData = cache.data;
+                            renderOil();
+                            updateOilApiStatus('success', '缓存');
+                            return;
+                        }
+                    } catch (e) {}
+                }
+
+                updateOilApiStatus('loading', '请求中...');
+
+                try {
+                    const url = `${OIL_MARKET_API_URL}?key=${TIAN_API_KEY}&prov=上海`;
+                    const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+                    if (data.code !== 200) throw new Error(`API错误 (${data.code}): ${data.msg}`);
+
+                    const result = data.result;
+                    if (!result) throw new Error('数据为空');
+
+                    const parsePrice = (item) => { if (!item) return 0; return parseFloat(item.price) || 0; };
+                    const parseChange = (item) => { if (!item) return 0; return parseFloat(item.price_change) || 0; };
+
+                    const p92 = result.p92 || {},
+                        p95 = result.p95 || {},
+                        p98 = result.p98 || {},
+                        p0 = result.p0 || {};
+                    const prices = {
+                        '92': parsePrice(p92),
+                        '95': parsePrice(p95),
+                        '98': parsePrice(p98),
+                        '0': parsePrice(p0)
+                    };
+                    if (prices['92'] <= 0 || prices['95'] <= 0) throw new Error('油价数据异常');
+
+                    let trend = 'down';
+                    const change92 = parseChange(p92);
+                    if (change92 > 0) trend = 'up';
+                    else if (change92 < 0) trend = 'down';
+                    else {
+                        const oldCached = storage.getItem('oilPricesCache');
+                        if (oldCached) {
+                            try {
+                                const old = JSON.parse(oldCached);
+                                if (old.data && old.data.prices) {
+                                    const old92 = parseFloat(old.data.prices['92']) || 0;
+                                    if (prices['92'] > old92) trend = 'up';
+                                    else if (prices['92'] < old92) trend = 'down';
+                                }
+                            } catch (e) {}
+                        }
+                    }
+
+                    const formatDate = (dateStr) => {
+                        if (!dateStr || dateStr.length !== 8) return dateStr;
+                        return `${dateStr.substring(0,4)}年${dateStr.substring(4,6)}月${dateStr.substring(6,8)}日`;
+                    };
+
+                    oilData.prices = prices;
+                    oilData.trend = trend;
+                    oilData.lastAdjusted = formatDate(result.last_adjusted);
+                    oilData.nextAdjustment = formatDate(result.next_adjustment);
+                    oilData.region = result.prov || '上海';
+                    oilData.updateTime = new Date().toLocaleString('zh-CN');
+                    oilData.source = '天行API';
+                    oilData.apiStatus = 'success';
+
+                    storage.setItem('oilPricesCache', JSON.stringify({ timestamp: Date.now(), data: oilData }));
+                    renderOil();
+                    updateOilApiStatus('success', `${oilData.region} ${prices['92']}元`);
+
+                } catch (error) {
+                    console.warn('⚠️ 油价行情API失败:', error.message);
+                    oilData.apiStatus = 'error';
+                    updateOilApiStatus('error', error.message);
+
+                    if (cached) {
+                        try {
+                            const cache = JSON.parse(cached);
+                            oilData = cache.data;
+                            oilData.updateTime = '缓存数据 (API暂不可用)';
+                            oilData.source = '缓存';
+                            renderOil();
+                            return;
+                        } catch (e) {}
+                    }
+
+                    oilData.prices = { '92': 7.14, '95': 7.60, '98': 9.60, '0': 6.80 };
+                    oilData.trend = 'down';
+                    oilData.lastAdjusted = '2026-07-17';
+                    oilData.nextAdjustment = '2026-07-27';
+                    oilData.region = '上海';
+                    oilData.updateTime = '默认数据';
+                    oilData.source = '默认数据';
+                    renderOil();
+                }
+            }
+
+            function renderOil() {
+                const p = oilData.prices;
+                const isDown = oilData.trend === 'down';
+                const isUp = oilData.trend === 'up';
+
+                const trendEl = document.getElementById('oilPriceTrend');
+                const nextEl = document.getElementById('oilNextAdjust');
+
+                if (trendEl) {
+                    if (isDown) {
+                        trendEl.className = 'text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full';
+                        trendEl.innerHTML = '<i class="fa fa-arrow-down mr-1"></i>下调';
+                    } else if (isUp) {
+                        trendEl.className = 'text-xs bg-red-100 text-red-700 px-2.5 py-1 rounded-full';
+                        trendEl.innerHTML = '<i class="fa fa-arrow-up mr-1"></i>上调';
+                    } else {
+                        trendEl.className = 'text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full';
+                        trendEl.innerHTML = '<i class="fa fa-minus mr-1"></i>持平';
+                    }
+                }
+
+                if (nextEl) {
+                    nextEl.innerHTML =
+                        `<i class="fa fa-clock-o mr-1"></i>${oilData.nextAdjustment || '待定'}调价 · ${oilData.region}`;
+                }
+
+                const formatPrice = (val) => {
+                    if (val === '--' || isNaN(val) || val <= 0) return '--';
+                    return val.toFixed(2);
+                };
+
+                const changeSymbol = isDown ? '↓' : (isUp ? '↑' : '');
+                const changeColor = isDown ? 'text-green-600' : (isUp ? 'text-red-600' : 'text-gray-400');
+
+                document.getElementById('oil92').innerHTML =
+                    `${formatPrice(p['92'])} ${changeSymbol ? `<span class="text-xs ${changeColor}">${changeSymbol}0.12</span>` : ''}`;
+                document.getElementById('oil95').innerHTML =
+                    `${formatPrice(p['95'])} ${changeSymbol ? `<span class="text-xs ${changeColor}">${changeSymbol}0.12</span>` : ''}`;
+                document.getElementById('oil98').innerHTML =
+                    `${formatPrice(p['98'])} ${changeSymbol ? `<span class="text-xs ${changeColor}">${changeSymbol}0.12</span>` : ''}`;
+                document.getElementById('oil0').innerHTML =
+                    `${formatPrice(p['0'])} ${changeSymbol ? `<span class="text-xs ${changeColor}">${changeSymbol}0.12</span>` : ''}`;
+
+                document.getElementById('oilUpdateTime').textContent = '更新于 ' + oilData.updateTime;
+            }
+
+            // ================================================================
+            //  7. 主题切换
+            // ================================================================
+            function initTheme() {
+                const savedTheme = storage.getItem('theme');
+                const toggle = document.getElementById('themeToggle');
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    toggle.innerHTML = '<i class="fa fa-sun-o"></i>';
+                    toggle.title = '切换到浅色模式';
+                }
+                toggle.addEventListener('click', () => {
+                    document.body.classList.toggle('dark-mode');
+                    const isDark = document.body.classList.contains('dark-mode');
+                    if (isDark) {
+                        toggle.innerHTML = '<i class="fa fa-sun-o"></i>';
+                        toggle.title = '切换到浅色模式';
+                        storage.setItem('theme', 'dark');
+                    } else {
+                        toggle.innerHTML = '<i class="fa fa-moon-o"></i>';
+                        toggle.title = '切换到深色模式';
+                        storage.setItem('theme', 'light');
+                    }
+                });
+            }
+
+            // ================================================================
+            //  8. 日历渲染（不带节假日，只显示农历）
             // ================================================================
             let currentCalendarYear = new Date().getFullYear();
             let currentCalendarMonth = new Date().getMonth() + 1;
+            let calendarCache = {};
 
             async function renderCalendar(year, month) {
                 const container = document.getElementById('calendarGrid');
                 if (!container) return;
                 const titleEl = document.getElementById('calendarTitle');
                 if (titleEl) titleEl.textContent = `${year}年${month}月`;
-            
+
                 const firstDay = new Date(year, month - 1, 1).getDay();
                 const daysInMonth = new Date(year, month, 0).getDate();
                 const today = new Date();
-            
+
                 let html = '<div class="grid grid-cols-7 gap-1">';
                 const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
                 weekDays.forEach(w => html += `<div class="text-center text-xs text-gray-500 font-medium py-1">${w}</div>`);
-            
+
                 for (let i = 0; i < firstDay; i++) html += `<div class="p-1"></div>`;
-            
-                // 并行获取所有日期的农历信息
-                const dayInfos = [];
+
+                const datePromises = [];
                 for (let d = 1; d <= daysInMonth; d++) {
-                    dayInfos.push(getLunarInfo(year, month, d));
+                    const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                    if (calendarCache[dateStr]) {
+                        datePromises.push(Promise.resolve(calendarCache[dateStr]));
+                    } else {
+                        datePromises.push(fetchSingleDayHuangli(year, month, d));
+                    }
                 }
-                            
-                const infos = await Promise.all(dayInfos);
-            
+                const dayInfos = await Promise.all(datePromises);
+
                 for (let d = 1; d <= daysInMonth; d++) {
-                    const info = infos[d - 1];
+                    const info = dayInfos[d - 1] || {};
                     const isToday = (year === today.getFullYear() && month === today.getMonth() + 1 && d === today.getDate());
                     const dayOfWeek = (firstDay + d - 1) % 7;
                     const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
-            
+
                     let classes = 'cal-cell';
                     if (isToday) classes += ' today';
                     else if (isWeekend) classes += ' weekend';
-            
-                    // 检查是否有节假日
-                    if (info.festivals.length > 0) classes += ' holiday';
-                    // 检查是否为调休上班
-                    if (info.displayTags.some(t => t === '调休补班')) classes += ' workday';
-            
+
+                    // 只显示农历节日（来自老黄历API）
+                    const festival = info.festival || '';
+                    const lunarFestival = info.lunarFestival || '';
+
                     let tagsHtml = '';
-                    if (info.displayTags.length > 0) {
-                        info.displayTags.forEach((tag, idx) => {
-                            const cls = info.tagClasses[idx] || 'tag-other';
-                            tagsHtml += `<div class="tag ${cls}">${tag}</div>`;
-                        });
+                    if (festival !== '--' && festival !== '') {
+                        tagsHtml += `<div class="tag tag-festival">${festival}</div>`;
                     }
-            
+                    if (lunarFestival !== '--' && lunarFestival !== '') {
+                        tagsHtml += `<div class="tag tag-festival">${lunarFestival}</div>`;
+                    }
+
                     const lunarDayDisplay = info.lunarDay || '';
-            
-                    // 添加点击事件，查看该日期的黄历
+
                     html += `<div class="${classes}" onclick="handleDateClick(this, ${year}, ${month}, ${d})" title="点击查看黄历详情">
                         <div class="day-num">${d}</div>
                         <div class="lunar-day">${lunarDayDisplay}</div>
@@ -1869,117 +1493,103 @@
                 }
                 html += '</div>';
                 container.innerHTML = html;
-            
-                // 默认显示今天的黄历信息
+
                 const now = new Date();
-                const defaultYear = now.getFullYear();
-                const defaultMonth = now.getMonth() + 1;
-                const defaultDay = now.getDate();
-                
-                const firstInfo = await getLunarInfo(defaultYear, defaultMonth, defaultDay);
-                
-                // 调试输出
-                console.log(` 日历弹窗 - ${defaultYear}年${defaultMonth}月${defaultDay}日 黄历:`, {
-                    宜: firstInfo.yi,
-                    忌: firstInfo.ji,
-                    冲煞: firstInfo.chongSha,
-                    喜神: firstInfo.xiShen,
-                    财神: firstInfo.caiShen
-                });
-                
-                const yiJiEl = document.getElementById('calendarYiJi');
-                if (yiJiEl) {
-                    const yiText = firstInfo.yi.length > 0 ? firstInfo.yi.join('、') : '无';
-                    const jiText = firstInfo.ji.length > 0 ? firstInfo.ji.join('、') : '无';
-                    
-                    // 构建完整的黄历信息 HTML
-                    let huangliHtml = `
-                        <div class="space-y-3">
-                            <!-- 宜忌 -->
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="p-3 bg-green-50 rounded-lg border border-green-200">
-                                    <div class="text-xs text-green-600 font-bold mb-1">✅ 宜</div>
-                                    <div class="text-sm text-gray-700">${yiText}</div>
-                                </div>
-                                <div class="p-3 bg-rose-50 rounded-lg border border-rose-200">
-                                    <div class="text-xs text-rose-600 font-bold mb-1">❌ 忌</div>
-                                    <div class="text-sm text-gray-700">${jiText}</div>
-                                </div>
-                            </div>
-                            
-                            <!-- 冲煞和建除 -->
-                            <div class="grid grid-cols-2 gap-3 text-sm">
-                                ${firstInfo.chongSha ? `<div class="flex items-center"><span class="text-gray-500 w-16">🐉 冲煞：</span><span class="text-gray-700">${firstInfo.chongSha}</span></div>` : ''}
-                                ${firstInfo.jianChu ? `<div class="flex items-center"><span class="text-gray-500 w-16">️ 建除：</span><span class="text-gray-700">${firstInfo.jianChu}</span></div>` : ''}
-                            </div>
-                            
-                            <!-- 吉神方位 -->
-                            ${(firstInfo.xiShen || firstInfo.caiShen || firstInfo.fuShen) ? `
-                            <div class="bg-amber-50 rounded-lg p-3 border border-amber-200">
-                                <div class="text-xs text-amber-700 font-bold mb-2">🧭 吉神方位</div>
-                                <div class="grid grid-cols-3 gap-2 text-sm">
-                                    ${firstInfo.xiShen ? `<div><span class="text-gray-500">喜神：</span><span class="text-gray-700 font-medium">${firstInfo.xiShen}</span></div>` : ''}
-                                    ${firstInfo.caiShen ? `<div><span class="text-gray-500">财神：</span><span class="text-gray-700 font-medium">${firstInfo.caiShen}</span></div>` : ''}
-                                    ${firstInfo.fuShen ? `<div><span class="text-gray-500">福神：</span><span class="text-gray-700 font-medium">${firstInfo.fuShen}</span></div>` : ''}
-                                </div>
-                            </div>
-                            ` : ''}
-                            
-                            <!-- 干支和五行 -->
-                            <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                                <div class="text-xs text-blue-700 font-bold mb-2">📜 干支五行</div>
-                                <div class="grid grid-cols-2 gap-2 text-sm">
-                                    ${firstInfo.ganZhi.year ? `<div><span class="text-gray-500">年柱：</span><span class="text-gray-700 font-medium">${firstInfo.ganZhi.year}</span></div>` : ''}
-                                    ${firstInfo.ganZhi.month ? `<div><span class="text-gray-500">月柱：</span><span class="text-gray-700 font-medium">${firstInfo.ganZhi.month}</span></div>` : ''}
-                                    ${firstInfo.ganZhi.day ? `<div><span class="text-gray-500">日柱：</span><span class="text-gray-700 font-medium">${firstInfo.ganZhi.day}</span></div>` : ''}
-                                    ${firstInfo.wuXing ? `<div><span class="text-gray-500">纳音：</span><span class="text-gray-700 font-medium">${firstInfo.wuXing}</span></div>` : ''}
-                                </div>
-                            </div>
-                            
-                            <!-- 彭祖百忌和星宿 -->
-                            <div class="grid grid-cols-2 gap-3 text-sm">
-                                ${firstInfo.pengZu ? `<div class="bg-purple-50 rounded-lg p-3 border border-purple-200"><div class="text-xs text-purple-700 font-bold mb-1">⚠️ 彭祖百忌</div><div class="text-gray-700">${firstInfo.pengZu}</div></div>` : ''}
-                                ${firstInfo.xingXiu ? `<div class="bg-indigo-50 rounded-lg p-3 border border-indigo-200"><div class="text-xs text-indigo-700 font-bold mb-1">⭐ 二十八星宿</div><div class="text-gray-700">${firstInfo.xingXiu}</div></div>` : ''}
-                            </div>
-                        </div>
-                    `;
-                    
-                    yiJiEl.innerHTML = huangliHtml;
-                }
+                const todayInfo = await fetchSingleDayHuangli(now.getFullYear(), now.getMonth() + 1, now.getDate());
+                updateYiJiDisplay(todayInfo);
             }
-            
-            // 全局函数：处理日期点击（切换选中状态并显示黄历）
-            window.handleDateClick = async function(element, year, month, day) {
-                // 移除所有日期的 selected 类
-                document.querySelectorAll('.cal-cell').forEach(cell => {
-                    cell.classList.remove('selected');
-                });
-                
-                // 给当前点击的日期添加 selected 类
-                element.classList.add('selected');
-                
-                // 显示该日期的黄历信息
-                await window.showDayHuangli(year, month, day);
-            };
-            
-            // 全局函数：显示指定日期的黄历
-            window.showDayHuangli = async function(year, month, day) {
-                const info = await getLunarInfo(year, month, day);
-                
-                // 构建完整的黄历信息 HTML
-                const yiText = info.yi.length > 0 ? info.yi.join('、') : '无';
-                const jiText = info.ji.length > 0 ? info.ji.join('、') : '无';
-                
-                let huangliHtml = `
-                    <div class="space-y-3">
-                        <!-- 日期标题 -->
-                        <div class="text-center p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200">
-                            <div class="text-lg font-bold text-gray-800">${year}年${month}月${day}日</div>
-                            <div class="text-sm text-gray-600 mt-1">${info.full}</div>
-                            ${info.solarTerm ? `<div class="text-xs text-green-600 mt-1">🌿 ${info.solarTerm}</div>` : ''}
+
+            async function fetchSingleDayHuangli(year, month, day) {
+                const dateStr =
+                    `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+                if (calendarCache[dateStr]) {
+                    return calendarCache[dateStr];
+                }
+
+                try {
+                    const url = `${HUANGLI_API_URL}?key=${TIAN_API_KEY}&date=${dateStr}`;
+                    const resp = await fetch(url, { signal: AbortSignal.timeout(5000) });
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+
+                    if (data.code === 200 && data.result) {
+                        const result = data.result;
+                        const info = {
+                            lunarDay: result.lunarday || '--',
+                            lunarMonth: result.lubarmonth || '--',
+                            lunarYear: result.tiangandizhiyear || '--',
+                            shengxiao: result.shengxiao || '--',
+                            fitness: result.fitness || '--',
+                            taboo: result.taboo || '--',
+                            chongsha: result.chongsha || '--',
+                            pengzu: result.pengzu || '--',
+                            xingsu: result.xingsu || '--',
+                            shenwei: result.shenwei || '--',
+                            taishen: result.taishen || '--',
+                            jianshen: result.jianshen || '--',
+                            festival: result.festival || '--',
+                            lunarFestival: result.lunar_festival || '--',
+                            gregoriandate: result.gregoriandate || '--',
+                            tiangandizhi: {
+                                year: result.tiangandizhiyear || '--',
+                                month: result.tiangandizhimonth || '--',
+                                day: result.tiangandizhiday || '--'
+                            }
+                        };
+                        calendarCache[dateStr] = info;
+                        return info;
+                    }
+                } catch (e) {
+                    console.warn(`获取${dateStr}黄历失败:`, e.message);
+                }
+
+                const defaultInfo = {
+                    lunarDay: '--',
+                    lunarMonth: '--',
+                    lunarYear: '--',
+                    shengxiao: '--',
+                    fitness: '--',
+                    taboo: '--',
+                    chongsha: '--',
+                    pengzu: '--',
+                    xingsu: '--',
+                    shenwei: '--',
+                    taishen: '--',
+                    jianshen: '--',
+                    festival: '--',
+                    lunarFestival: '--',
+                    gregoriandate: '--',
+                    tiangandizhi: { year: '--', month: '--', day: '--' }
+                };
+                calendarCache[dateStr] = defaultInfo;
+                return defaultInfo;
+            }
+
+            function updateYiJiDisplay(info) {
+                const el = document.getElementById('calendarYiJi');
+                if (!el) return;
+
+                const yiText = info.fitness !== '--' ? info.fitness.replace(/\./g, '、').replace(/,/g, '、') : '无';
+                const jiText = info.taboo !== '--' ? info.taboo.replace(/\./g, '、').replace(/,/g, '、') : '无';
+
+                let lunarDisplay = '';
+                if (info.lunarYear !== '--' && info.lunarMonth !== '--' && info.lunarDay !== '--') {
+                    lunarDisplay =
+                        `${info.tiangandizhi.year || info.lunarYear}年【${info.shengxiao}年】 ${info.lunarMonth}月${info.lunarDay}`;
+                } else if (info.lunarDay !== '--') {
+                    lunarDisplay = `${info.lunarMonth}月${info.lunarDay}`;
+                } else {
+                    lunarDisplay = '--';
+                }
+
+                let html = `
+                    <div class="space-y-3 text-left">
+                        <div class="text-center p-2 bg-amber-50 rounded-lg border border-amber-200">
+                            <div class="text-sm font-medium text-gray-700">📅 ${lunarDisplay}</div>
+                            ${info.festival !== '--' && info.festival !== '' ? `<div class="text-xs text-rose-600 mt-1">🎉 公历节日：${info.festival}</div>` : ''}
+                            ${info.lunarFestival !== '--' && info.lunarFestival !== '' ? `<div class="text-xs text-amber-600 mt-1">🎊 农历节日：${info.lunarFestival}</div>` : ''}
                         </div>
-                        
-                        <!-- 宜忌 -->
                         <div class="grid grid-cols-2 gap-3">
                             <div class="p-3 bg-green-50 rounded-lg border border-green-200">
                                 <div class="text-xs text-green-600 font-bold mb-1">✅ 宜</div>
@@ -1990,223 +1600,36 @@
                                 <div class="text-sm text-gray-700">${jiText}</div>
                             </div>
                         </div>
-                        
-                        <!-- 冲煞和建除 -->
-                        <div class="grid grid-cols-2 gap-3 text-sm">
-                            ${info.chongSha ? `<div class="flex items-center"><span class="text-gray-500 w-16">🐉 冲煞：</span><span class="text-gray-700">${info.chongSha}</span></div>` : ''}
-                            ${info.jianChu ? `<div class="flex items-center"><span class="text-gray-500 w-16">️ 建除：</span><span class="text-gray-700">${info.jianChu}</span></div>` : ''}
-                        </div>
-                        
-                        <!-- 吉神方位 -->
-                        ${(info.xiShen || info.caiShen || info.fuShen) ? `
-                        <div class="bg-amber-50 rounded-lg p-3 border border-amber-200">
-                            <div class="text-xs text-amber-700 font-bold mb-2"> 吉神方位</div>
-                            <div class="grid grid-cols-3 gap-2 text-sm">
-                                ${info.xiShen ? `<div><span class="text-gray-500">喜神：</span><span class="text-gray-700 font-medium">${info.xiShen}</span></div>` : ''}
-                                ${info.caiShen ? `<div><span class="text-gray-500">财神：</span><span class="text-gray-700 font-medium">${info.caiShen}</span></div>` : ''}
-                                ${info.fuShen ? `<div><span class="text-gray-500">福神：</span><span class="text-gray-700 font-medium">${info.fuShen}</span></div>` : ''}
-                            </div>
-                        </div>
-                        ` : ''}
-                        
-                        <!-- 干支和五行 -->
-                        <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                            <div class="text-xs text-blue-700 font-bold mb-2"> 干支五行</div>
-                            <div class="grid grid-cols-2 gap-2 text-sm">
-                                ${info.ganZhi.year ? `<div><span class="text-gray-500">年柱：</span><span class="text-gray-700 font-medium">${info.ganZhi.year}</span></div>` : ''}
-                                ${info.ganZhi.month ? `<div><span class="text-gray-500">月柱：</span><span class="text-gray-700 font-medium">${info.ganZhi.month}</span></div>` : ''}
-                                ${info.ganZhi.day ? `<div><span class="text-gray-500">日柱：</span><span class="text-gray-700 font-medium">${info.ganZhi.day}</span></div>` : ''}
-                                ${info.wuXing ? `<div><span class="text-gray-500">纳音：</span><span class="text-gray-700 font-medium">${info.wuXing}</span></div>` : ''}
-                            </div>
-                        </div>
-                        
-                        <!-- 彭祖百忌和星宿 -->
-                        <div class="grid grid-cols-2 gap-3 text-sm">
-                            ${info.pengZu ? `<div class="bg-purple-50 rounded-lg p-3 border border-purple-200"><div class="text-xs text-purple-700 font-bold mb-1">⚠️ 彭祖百忌</div><div class="text-gray-700">${info.pengZu}</div></div>` : ''}
-                            ${info.xingXiu ? `<div class="bg-indigo-50 rounded-lg p-3 border border-indigo-200"><div class="text-xs text-indigo-700 font-bold mb-1">⭐ 二十八星宿</div><div class="text-gray-700">${info.xingXiu}</div></div>` : ''}
-                        </div>
+                        ${info.chongsha !== '--' ? `<div class="flex items-center text-sm"><span class="text-gray-500 w-16">🐉 冲煞：</span><span class="text-gray-700">${info.chongsha}</span></div>` : ''}
+                        ${info.jianshen !== '--' ? `<div class="flex items-center text-sm"><span class="text-gray-500 w-16">📐 建除：</span><span class="text-gray-700">${info.jianshen}</span></div>` : ''}
+                        ${info.shenwei !== '--' ? `<div class="bg-amber-50 rounded-lg p-2 border border-amber-200">
+                            <div class="text-xs text-amber-700 font-bold mb-1">🧭 吉神方位</div>
+                            <div class="text-sm text-gray-700">${info.shenwei}</div>
+                        </div>` : ''}
+                        ${info.xingsu !== '--' ? `<div class="bg-indigo-50 rounded-lg p-2 border border-indigo-200 text-sm"><span class="text-gray-500">⭐ 星宿：</span><span class="text-gray-700">${info.xingsu}</span></div>` : ''}
+                        ${info.pengzu !== '--' ? `<div class="bg-purple-50 rounded-lg p-2 border border-purple-200 text-sm"><span class="text-gray-500">⚠️ 彭祖百忌：</span><span class="text-gray-700">${info.pengzu}</span></div>` : ''}
+                        ${info.taishen !== '--' ? `<div class="bg-blue-50 rounded-lg p-2 border border-blue-200 text-sm"><span class="text-gray-500">👶 胎神：</span><span class="text-gray-700">${info.taishen}</span></div>` : ''}
+                        ${info.tiangandizhi.year !== '--' ? `<div class="text-xs text-gray-400 mt-1">干支：${info.tiangandizhi.year}年 ${info.tiangandizhi.month}月 ${info.tiangandizhi.day}日</div>` : ''}
+                        <div class="text-center text-xs text-gray-400">📌 数据来源：天行API老黄历（45号）</div>
                     </div>
                 `;
-                
-                const yiJiEl = document.getElementById('calendarYiJi');
-                if (yiJiEl) {
-                    yiJiEl.innerHTML = huangliHtml;
-                    // 滚动到黄历信息处
-                    yiJiEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
+                el.innerHTML = html;
+            }
+
+            window.handleDateClick = async function(el, year, month, day) {
+                document.querySelectorAll('.cal-cell').forEach(c => c.classList.remove('selected'));
+                el.classList.add('selected');
+                const info = await fetchSingleDayHuangli(year, month, day);
+                updateYiJiDisplay(info);
+                const yiJi = document.getElementById('calendarYiJi');
+                if (yiJi) yiJi.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             };
 
             // ================================================================
-            //  7. 详情弹窗
-            // ================================================================
-            async function openDetailModal(type) {
-                const modal = document.getElementById('detailModal');
-                const title = document.getElementById('detailTitle');
-                const content = document.getElementById('detailContent');
-                if (!modal || !title || !content) return;
-
-                if (type === 'calendarFull') {
-                    title.textContent = '📅 农历日历';
-                    content.innerHTML = `
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <button class="nav-btn" id="prevMonthBtn"><i class="fa fa-chevron-left"></i></button>
-                                <span class="text-xl font-bold" id="calendarTitle">${currentCalendarYear}年${currentCalendarMonth}月</span>
-                                <button class="nav-btn" id="nextMonthBtn"><i class="fa fa-chevron-right"></i></button>
-                            </div>
-                            <div id="calendarGrid" class="bg-white rounded-xl p-4 border border-gray-100"></div>
-                            <div id="calendarYiJi" class="text-center p-2 bg-gray-50 rounded-lg"></div>
-                            <div class="flex flex-wrap justify-center gap-3 text-xs text-gray-500">
-                                <span class="px-2 py-1 bg-rose-100 rounded">节日</span>
-                                <span class="px-2 py-1 bg-green-100 rounded">节气</span>
-                                <span class="px-2 py-1 bg-blue-100 rounded">调休上班</span>
-                                <span class="px-2 py-1 bg-amber-500 text-white rounded">今日</span>
-                            </div>
-                            <div class="p-2 bg-gray-50 rounded-lg text-xs text-gray-500 text-center">
-                                📌 数据源：节假日 - <a href="https://timor.tech/api/holiday" target="_blank" class="text-blue-600 hover:underline">Timor API</a> | 黄历宜忌 - <a href="https://github.com/6tail/lunar-javascript" target="_blank" class="text-blue-600 hover:underline">lunar-javascript</a>
-                            </div>
-                        </div>
-                    `;
-                    renderCalendar(currentCalendarYear, currentCalendarMonth);
-                    document.getElementById('prevMonthBtn').addEventListener('click', () => {
-                        if (currentCalendarMonth === 1) { currentCalendarMonth = 12;
-                            currentCalendarYear--; } else { currentCalendarMonth--; }
-                        renderCalendar(currentCalendarYear, currentCalendarMonth);
-                    });
-                    document.getElementById('nextMonthBtn').addEventListener('click', () => {
-                        if (currentCalendarMonth === 12) { currentCalendarMonth = 1;
-                            currentCalendarYear++; } else { currentCalendarMonth++; }
-                        renderCalendar(currentCalendarYear, currentCalendarMonth);
-                    });
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                    return;
-                }
-
-                if (type === 'weather') {
-                    title.textContent = '🌤️ 上海天气 & 7天预报';
-                    let dailyHtml = '';
-                    if (weatherData.daily && weatherData.daily.length > 0) {
-                        dailyHtml = `<div class="p-4 bg-blue-50 rounded-xl"><div class="font-bold mb-3">📅 未来7天预报</div><div class="space-y-2">`;
-                        weatherData.daily.forEach(item => {
-                            dailyHtml += `
-                                <div class="flex items-center justify-between py-2 border-b border-blue-100 last:border-0">
-                                    <span class="w-16 font-medium text-sm">${item.day}</span>
-                                    <span class="text-xs text-gray-500 w-12">${item.date}</span>
-                                    <i class="fa ${item.icon} text-amber-500 w-6"></i>
-                                    <span class="flex-1 text-center text-sm">${item.desc}</span>
-                                    <span class="text-sm">
-                                        <span class="text-rose-600">${item.max}°</span>
-                                        <span class="text-gray-400 mx-1">/</span>
-                                        <span class="text-blue-600">${item.min}°</span>
-                                    </span>
-                                </div>
-                            `;
-                        });
-                        dailyHtml += `</div></div>`;
-                    } else {
-                        dailyHtml = `<div class="p-3 bg-gray-50 rounded-xl text-center text-gray-500">暂无预报数据</div>`;
-                    }
-
-                    content.innerHTML = `
-                        <div class="space-y-4">
-                            <div class="text-center p-4 bg-sky-50 rounded-xl">
-                                <div class="text-4xl ${weatherData.icon === 'fa-spinner fa-spin' ? 'text-gray-400' : 'text-amber-500'} mb-2">
-                                    <i class="fa ${weatherData.icon}"></i>
-                                </div>
-                                <div class="text-3xl font-bold">${weatherData.temp}</div>
-                                <div class="text-gray-500">${weatherData.desc} · ${weatherData.city}</div>
-                                <div class="text-xs text-gray-400 mt-1">更新于 ${weatherData.updateTime}</div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="p-3 bg-gray-50 rounded-xl text-center">
-                                    <div class="text-blue-500"><i class="fa fa-tint"></i></div>
-                                    <div class="font-bold">${weatherData.humidity}</div>
-                                    <div class="text-xs text-gray-500">相对湿度</div>
-                                </div>
-                                <div class="p-3 bg-gray-50 rounded-xl text-center">
-                                    <div class="text-cyan-500"><i class="fa fa-location-arrow"></i></div>
-                                    <div class="font-bold">${weatherData.wind}</div>
-                                    <div class="text-xs text-gray-500">风速</div>
-                                </div>
-                            </div>
-                            ${dailyHtml}
-                            <div class="p-2 bg-blue-50 rounded-lg text-xs text-gray-500 text-center">
-                                📌 数据来源：<a href="https://open-meteo.com" target="_blank" class="text-blue-600 hover:underline">Open-Meteo</a>
-                            </div>
-                        </div>
-                    `;
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                    return;
-                }
-
-                if (type === 'oil') {
-                    title.textContent = '⛽ 油价详情';
-                    content.innerHTML = `
-                        <div class="space-y-4">
-                            <div id="oilModalTrend" class="text-center p-4 bg-green-50 rounded-xl">
-                                <div class="text-green-600 font-bold mb-1"><i class="fa fa-arrow-down"></i> 油价下调窗口</div>
-                                <div id="oilModalDate" class="text-lg font-bold">加载中...</div>
-                            </div>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl"><span>92# 汽油</span><span id="modalOil92" class="font-bold">--</span></div>
-                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl"><span>95# 汽油</span><span id="modalOil95" class="font-bold">--</span></div>
-                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl"><span>98# 汽油</span><span id="modalOil98" class="font-bold">--</span></div>
-                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl"><span>0# 柴油</span><span id="modalOil0" class="font-bold">--</span></div>
-                            </div>
-                            <div class="p-4 bg-amber-50 rounded-xl"><div class="font-bold mb-2">💡 油价趋势</div><div class="text-sm text-gray-600">数据来源：国家发改委及各地加油站公开数据。油价每10个工作日调整一次，具体价格以当地加油站为准。</div></div>
-                        </div>
-                    `;
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                    return;
-                }
-
-                if (type === 'calendar') {
-                    const now = new Date();
-                    const info = await getLunarInfo(now.getFullYear(), now.getMonth() + 1, now.getDate());
-                    const yiText = info.yi.length > 0 ? info.yi.join('、') : '无';
-                    const jiText = info.ji.length > 0 ? info.ji.join('、') : '无';
-                    const festivalText = info.festivals.length > 0 ? info.festivals.join('、') : '无';
-                    title.textContent = '📅 今日黄历';
-                    content.innerHTML = `
-                        <div class="space-y-4">
-                            <div class="text-center p-4 bg-amber-50 rounded-xl">
-                                <div class="text-2xl font-bold">${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日</div>
-                                <div class="text-gray-500">${info.lunarYear || ''} ${info.lunarMonth}月${info.lunarDay}</div>
-                                ${info.solarTerm ? `<div class="text-sm text-green-600 mt-1">🌿 节气：${info.solarTerm}</div>` : ''}
-                                ${festivalText !== '无' ? `<div class="text-sm text-rose-600 mt-1">🎉 节日：${festivalText}</div>` : ''}
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="p-4 bg-green-50 rounded-xl text-center">
-                                    <div class="text-green-600 font-bold mb-2">✅ 宜</div>
-                                    <div class="text-sm">${yiText}</div>
-                                </div>
-                                <div class="p-4 bg-rose-50 rounded-xl text-center">
-                                    <div class="text-rose-600 font-bold mb-2">❌ 忌</div>
-                                    <div class="text-sm">${jiText}</div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                    return;
-                }
-            }
-
-            function closeDetailModal() {
-                document.getElementById('detailModal').classList.add('hidden');
-                document.getElementById('detailModal').classList.remove('flex');
-            }
-
-            // ================================================================
-            //  8. 时间更新
+            //  9. 时间更新
             // ================================================================
             async function updateTime() {
                 const now = new Date();
-                const info = await getLunarInfo(now.getFullYear(), now.getMonth() + 1, now.getDate());
                 const h = String(now.getHours()).padStart(2, '0');
                 const m = String(now.getMinutes()).padStart(2, '0');
                 const s = String(now.getSeconds()).padStart(2, '0');
@@ -2219,22 +1642,20 @@
                 document.getElementById('currentTime').textContent = `${h}:${m}:${s}`;
                 document.getElementById('currentDate').textContent = `${y}年${mon}月${d}日`;
                 document.getElementById('currentWeek').textContent = `星期${w}`;
-                document.getElementById('lunarDate').textContent = `${info.lunarYear || ''} ${info.lunarMonth}月${info.lunarDay}` || '农历 --';
-                document.getElementById('yiText').textContent = info.yi.length > 0 ? info.yi.join('、') : '无';
-                document.getElementById('jiText').textContent = info.ji.length > 0 ? info.ji.join('、') : '无';
-                document.getElementById('calendarDay').textContent = d;
-                document.getElementById('calendarMonth').textContent = `${y}年${mon}月`;
+
+                // 更新黄历显示
+                renderHuangli();
             }
 
             // ================================================================
-            //  9. 网站卡片渲染（同前，无变化）
+            //  10. 网站卡片渲染
             // ================================================================
             function renderCategories() {
                 const container = document.getElementById('categoryTabs');
                 if (!container) return;
                 container.innerHTML = categories.map(cat => {
                     const count = sites.filter(s => s.category === cat).length;
-                    return `<button class="px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'bg-white text-gray-800 shadow-md' : 'bg-white/50 text-gray-600 hover:bg-white/70 border border-gray-200/50'}" data-category="${cat}">${cat} <span class="opacity-60">(${count})</span></button>`;
+                    return `<button class="px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat ? 'bg-white text-gray-800 shadow-md' : 'bg-white/50 text-gray-600 hover:bg-white/70 border border-gray-200/50'}" data-category="${cat}">${cat} <span class="opacity-60 text-xs">(${count})</span></button>`;
                 }).join('');
                 container.querySelectorAll('button').forEach(tab => {
                     tab.addEventListener('click', () => {
@@ -2256,7 +1677,7 @@
                     container.innerHTML = bookmarkSubCategories.map(cat => {
                         const count = cat === '全部书签' ? sites.filter(s => s.category === '我的书签').length : sites
                             .filter(s => s.category === '我的书签' && s.subCategory === cat).length;
-                        return `<button class="px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${selectedSubCategory === cat ? 'bg-white text-gray-700 shadow-md' : 'bg-white/40 text-gray-500 hover:bg-white/60 border border-gray-200/40'}" data-subcategory="${cat}">${cat} (${count})</button>`;
+                        return `<button class="px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${selectedSubCategory === cat ? 'bg-white text-gray-700 shadow-md' : 'bg-white/40 text-gray-500 hover:bg-white/60 border border-gray-200/40'}" data-subcategory="${cat}">${cat} (${count})</button>`;
                     }).join('');
                     container.querySelectorAll('button').forEach(tab => {
                         tab.addEventListener('click', () => {
@@ -2268,6 +1689,14 @@
                 } else {
                     subSection.style.display = 'none';
                 }
+            }
+
+            function debounce(fn, delay) {
+                let timer;
+                return function(...args) {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(this, args), delay);
+                };
             }
 
             function renderSites() {
@@ -2288,7 +1717,7 @@
                     return;
                 }
                 container.innerHTML = filteredSites.map((site, index) => `
-                    <div class="site-card glass rounded-2xl p-4 relative animate-fade-in" style="animation-delay: ${index * 0.03}s">
+                    <div class="site-card glass rounded-2xl p-4 relative" style="animation-delay: ${index * 0.03}s">
                         ${isEditMode ? `
                             <div class="absolute top-2 right-2 flex space-x-1">
                                 <button onclick="editSite(${site.id})" class="w-6 h-6 rounded-full bg-blue-500 text-white text-xs hover:bg-blue-600 transition-colors"><i class="fa fa-pencil"></i></button>
@@ -2305,21 +1734,20 @@
             }
 
             // ================================================================
-            //  10. 事件绑定
+            //  11. 事件绑定
             // ================================================================
             function setupEventListeners() {
                 document.getElementById('addSiteBtn').addEventListener('click', openAddModal);
-                document.getElementById('searchInput').addEventListener('input', renderSites);
-                document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                const searchInput = document.getElementById('searchInput');
+                searchInput.addEventListener('input', debounce(renderSites, 300));
+                searchInput.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
                         const value = e.target.value.trim();
                         if (value) {
                             const engine = document.getElementById('searchEngine').value;
-                            const urlMap = {
-                                baidu: `https://www.baidu.com/s?wd=${encodeURIComponent(value)}`,
+                            const urlMap = { baidu: `https://www.baidu.com/s?wd=${encodeURIComponent(value)}`,
                                 google: `https://www.google.com/search?q=${encodeURIComponent(value)}`,
-                                bing: `https://www.bing.com/search?q=${encodeURIComponent(value)}`
-                            };
+                                bing: `https://www.bing.com/search?q=${encodeURIComponent(value)}` };
                             window.open(urlMap[engine] || urlMap.baidu, '_blank');
                         }
                     }
@@ -2369,7 +1797,7 @@
                 document.getElementById('addModal').classList.remove('flex');
             }
 
-            function editSite(id) {
+            window.editSite = function(id) {
                 const site = sites.find(s => s.id === id);
                 if (site) {
                     document.getElementById('editId').value = id;
@@ -2380,9 +1808,9 @@
                     document.getElementById('addModal').classList.remove('hidden');
                     document.getElementById('addModal').classList.add('flex');
                 }
-            }
+            };
 
-            function deleteSite(id) {
+            window.deleteSite = function(id) {
                 if (confirm('确定要删除这个网站吗？')) {
                     sites = sites.filter(s => s.id !== id);
                     saveSites();
@@ -2391,20 +1819,20 @@
                     renderSubCategories();
                     updateSiteCount();
                 }
-            }
+            };
 
             function updateSiteCount() {
                 document.getElementById('siteCount').textContent = sites.length;
             }
 
             // ================================================================
-            //  11. 运行时间
+            //  12. 运行时间
             // ================================================================
             let systemStartTime = (() => {
-                const saved = localStorage.getItem('systemStartTime');
+                const saved = storage.getItem('systemStartTime');
                 if (saved) return parseInt(saved);
                 const now = Date.now();
-                localStorage.setItem('systemStartTime', now.toString());
+                storage.setItem('systemStartTime', now.toString());
                 return now;
             })();
 
@@ -2417,194 +1845,244 @@
             }
 
             // ================================================================
-            //  11.5. 油价信息更新
+            //  13. 详情弹窗
             // ================================================================
-            async function updateOilPriceInfo() {
-                try {
-                    // 调用免费油价API（数据来源：国家发改委及各地加油站公开数据）
-                    console.log('🔄 正在加载油价数据...');
-                    const response = await fetch('https://www.46.la/api/today-fuel-price/fuel-price-cache.json', {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json'
-                        }
+            window.openDetailModal = async function(type) {
+                const modal = document.getElementById('detailModal');
+                const title = document.getElementById('detailTitle');
+                const content = document.getElementById('detailContent');
+                if (!modal || !title || !content) return;
+
+                if (type === 'calendarFull') {
+                    title.textContent = '📅 农历日历';
+                    content.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <button class="nav-btn" id="prevMonthBtn"><i class="fa fa-chevron-left"></i></button>
+                                <span class="text-xl font-bold" id="calendarTitle">${currentCalendarYear}年${currentCalendarMonth}月</span>
+                                <button class="nav-btn" id="nextMonthBtn"><i class="fa fa-chevron-right"></i></button>
+                            </div>
+                            <div id="calendarGrid" class="bg-white rounded-xl p-4 border border-gray-100"></div>
+                            <div id="calendarYiJi" class="p-4 bg-gray-50 rounded-lg"></div>
+                            <div class="flex flex-wrap justify-center gap-3 text-xs text-gray-500">
+                                <span class="px-2 py-1 bg-amber-500 text-white rounded">今日</span>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded-lg text-xs text-gray-500 text-center">
+                                📌 数据来源：老黄历 - 天行API（45号）
+                            </div>
+                        </div>
+                    `;
+                    await renderCalendar(currentCalendarYear, currentCalendarMonth);
+                    document.getElementById('prevMonthBtn').addEventListener('click', () => {
+                        if (currentCalendarMonth === 1) { currentCalendarMonth = 12;
+                            currentCalendarYear--; } else { currentCalendarMonth--; }
+                        renderCalendar(currentCalendarYear, currentCalendarMonth);
                     });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    
-                    if (data.error || !data.list || data.list.length === 0) {
-                        throw new Error(data.error || '数据为空');
-                    }
-                    
-                    // 使用第一个地区的数据（通常是全国平均或北京）
-                    const oilData = data.list[0];
-                    const region = oilData.region || '全国';
-                    
-                    // 解析价格数据
-                    const prices = {
-                        '92': parseFloat(oilData.gas92) || 7.85,
-                        '95': parseFloat(oilData.gas95) || 8.36,
-                        '98': parseFloat(oilData.gas98) || 9.32,
-                        '0': parseFloat(oilData.diesel0) || 7.52
-                    };
-                    
-                    // 计算下次调价日期
-                    const nextAdjustDate = calculateNextOilAdjustDate();
-                    const dateStr = `${nextAdjustDate.getMonth() + 1}月${nextAdjustDate.getDate()}日24时`;
-                    
-                    // 判断涨跌趋势（与上次相比）
-                    const isDown = true; // 默认显示下调，实际应该比较历史数据
-                    
-                    // 更新首页卡片
-                    const trendEl = document.getElementById('oilPriceTrend');
-                    const nextAdjustEl = document.getElementById('oilNextAdjust');
-                    
-                    if (trendEl && nextAdjustEl) {
-                        trendEl.className = `text-xs px-2 py-0.5 rounded-full ${isDown ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
-                        trendEl.innerHTML = `<i class="fa fa-arrow-${isDown ? 'down' : 'up'} mr-1"></i>${isDown ? '下调' : '上调'}`;
-                        nextAdjustEl.innerHTML = `<i class="fa fa-clock-o mr-1"></i>${dateStr}调价 · ${region}`;
-                        
-                        // 更新价格显示
-                        document.getElementById('oil92').innerHTML = `${prices['92'].toFixed(2)} <span class="text-xs ${isDown ? 'text-green-600' : 'text-red-600'}">${isDown ? '↓' : '↑'}0.12</span>`;
-                        document.getElementById('oil95').innerHTML = `${prices['95'].toFixed(2)} <span class="text-xs ${isDown ? 'text-green-600' : 'text-red-600'}">${isDown ? '↓' : '↑'}0.13</span>`;
-                        document.getElementById('oil98').innerHTML = `${prices['98'].toFixed(2)} <span class="text-xs ${isDown ? 'text-green-600' : 'text-red-600'}">${isDown ? '↓' : '↑'}0.14</span>`;
-                        document.getElementById('oil0').innerHTML = `${prices['0'].toFixed(2)} <span class="text-xs ${isDown ? 'text-green-600' : 'text-red-600'}">${isDown ? '↓' : '↑'}0.11</span>`;
-                    }
-                    
-                    // 更新弹窗内容
-                    const modalTrendEl = document.getElementById('oilModalTrend');
-                    const modalDateEl = document.getElementById('oilModalDate');
-                    
-                    if (modalTrendEl && modalDateEl) {
-                        modalTrendEl.className = `text-center p-4 ${isDown ? 'bg-green-50' : 'bg-red-50'} rounded-xl`;
-                        const trendText = modalTrendEl.querySelector('.text-green-600, .text-red-600');
-                        if (trendText) {
-                            trendText.className = `${isDown ? 'text-green-600' : 'text-red-600'} font-bold mb-1`;
-                            trendText.innerHTML = `<i class="fa fa-arrow-${isDown ? 'down' : 'up'}"></i> 油价${isDown ? '下调' : '上调'}窗口`;
-                        }
-                        modalDateEl.textContent = `${dateStr}`;
-                        
-                        document.getElementById('modalOil92').innerHTML = `${prices['92'].toFixed(2)} 元/L <span class="${isDown ? 'text-green-600' : 'text-red-600'} text-sm">${isDown ? '↓' : '↑'}0.12</span>`;
-                        document.getElementById('modalOil95').innerHTML = `${prices['95'].toFixed(2)} 元/L <span class="${isDown ? 'text-green-600' : 'text-red-600'} text-sm">${isDown ? '↓' : '↑'}0.13</span>`;
-                        document.getElementById('modalOil98').innerHTML = `${prices['98'].toFixed(2)} 元/L <span class="${isDown ? 'text-green-600' : 'text-red-600'} text-sm">${isDown ? '↓' : '↑'}0.14</span>`;
-                        document.getElementById('modalOil0').innerHTML = `${prices['0'].toFixed(2)} 元/L <span class="${isDown ? 'text-green-600' : 'text-red-600'} text-sm">${isDown ? '↓' : '↑'}0.11</span>`;
-                    }
-                    
-                    console.log('✅ 油价数据加载成功:', data);
-                    
-                } catch (error) {
-                    console.warn('⚠️ 油价API加载失败，使用默认数据:', error.message);
-                    
-                    // 降级方案：使用默认数据
-                    useFallbackOilData();
+                    document.getElementById('nextMonthBtn').addEventListener('click', () => {
+                        if (currentCalendarMonth === 12) { currentCalendarMonth = 1;
+                            currentCalendarYear++; } else { currentCalendarMonth++; }
+                        renderCalendar(currentCalendarYear, currentCalendarMonth);
+                    });
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    return;
                 }
-            }
-            
-            // 使用默认油价数据（降级方案）
-            function useFallbackOilData() {
-                const fallbackPrices = {
-                    '92': 7.85,
-                    '95': 8.36,
-                    '98': 9.32,
-                    '0': 7.52
-                };
-                
-                const nextAdjustDate = calculateNextOilAdjustDate();
-                const dateStr = `${nextAdjustDate.getMonth() + 1}月${nextAdjustDate.getDate()}日24时`;
-                const isDown = true;
-                
-                // 更新首页卡片
-                const trendEl = document.getElementById('oilPriceTrend');
-                const nextAdjustEl = document.getElementById('oilNextAdjust');
-                
-                if (trendEl && nextAdjustEl) {
-                    trendEl.className = `text-xs px-2 py-0.5 rounded-full ${isDown ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
-                    trendEl.innerHTML = `<i class="fa fa-arrow-${isDown ? 'down' : 'up'} mr-1"></i>${isDown ? '下调' : '上调'}`;
-                    nextAdjustEl.innerHTML = `<i class="fa fa-info-circle mr-1 text-blue-600"></i>${dateStr}调价`;
-                    
-                    document.getElementById('oil92').innerHTML = `${fallbackPrices['92'].toFixed(2)} <span class="text-xs ${isDown ? 'text-green-600' : 'text-red-600'}">${isDown ? '↓' : '↑'}0.12</span>`;
-                    document.getElementById('oil95').innerHTML = `${fallbackPrices['95'].toFixed(2)} <span class="text-xs ${isDown ? 'text-green-600' : 'text-red-600'}">${isDown ? '↓' : '↑'}0.13</span>`;
-                    document.getElementById('oil98').innerHTML = `${fallbackPrices['98'].toFixed(2)} <span class="text-xs ${isDown ? 'text-green-600' : 'text-red-600'}">${isDown ? '↓' : '↑'}0.14</span>`;
-                    document.getElementById('oil0').innerHTML = `${fallbackPrices['0'].toFixed(2)} <span class="text-xs ${isDown ? 'text-green-600' : 'text-red-600'}">${isDown ? '↓' : '↑'}0.11</span>`;
-                }
-                
-                // 更新弹窗内容
-                const modalTrendEl = document.getElementById('oilModalTrend');
-                const modalDateEl = document.getElementById('oilModalDate');
-                
-                if (modalTrendEl && modalDateEl) {
-                    modalTrendEl.className = `text-center p-4 ${isDown ? 'bg-green-50' : 'bg-red-50'} rounded-xl`;
-                    const trendText = modalTrendEl.querySelector('.text-green-600, .text-red-600');
-                    if (trendText) {
-                        trendText.className = `${isDown ? 'text-green-600' : 'text-red-600'} font-bold mb-1`;
-                        trendText.innerHTML = `<i class="fa fa-arrow-${isDown ? 'down' : 'up'}"></i> 油价${isDown ? '下调' : '上调'}窗口`;
-                    }
-                    modalDateEl.textContent = `${dateStr}`;
-                    
-                    document.getElementById('modalOil92').innerHTML = `${fallbackPrices['92'].toFixed(2)} 元/L <span class="${isDown ? 'text-green-600' : 'text-red-600'} text-sm">${isDown ? '↓' : '↑'}0.12</span>`;
-                    document.getElementById('modalOil95').innerHTML = `${fallbackPrices['95'].toFixed(2)} 元/L <span class="${isDown ? 'text-green-600' : 'text-red-600'} text-sm">${isDown ? '↓' : '↑'}0.13</span>`;
-                    document.getElementById('modalOil98').innerHTML = `${fallbackPrices['98'].toFixed(2)} 元/L <span class="${isDown ? 'text-green-600' : 'text-red-600'} text-sm">${isDown ? '↓' : '↑'}0.14</span>`;
-                    document.getElementById('modalOil0').innerHTML = `${fallbackPrices['0'].toFixed(2)} 元/L <span class="${isDown ? 'text-green-600' : 'text-red-600'} text-sm">${isDown ? '↓' : '↑'}0.11</span>`;
-                }
-                
-                console.log('ℹ️ 已使用默认油价数据');
-            }
 
-            // 计算下次油价调整日期
-            function calculateNextOilAdjustDate() {
-                const now = new Date();
-                // 简化计算：假设每10天调整一次
-                // 实际应该根据工作日计算，这里使用近似值
-                const daysUntilNext = 10 - (now.getDate() % 10);
-                const nextDate = new Date(now);
-                nextDate.setDate(now.getDate() + daysUntilNext);
-                nextDate.setHours(24, 0, 0, 0);
-                return nextDate;
-            }
-
-            // ================================================================
-            //  12. 主题切换
-            // ================================================================
-            function initTheme() {
-                const savedTheme = localStorage.getItem('theme');
-                const themeToggle = document.getElementById('themeToggle');
-                
-                // 如果之前保存过深色模式，则应用
-                if (savedTheme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                    themeToggle.innerHTML = '<i class="fa fa-sun-o"></i>';
-                    themeToggle.title = '切换到浅色模式';
-                }
-                
-                // 绑定点击事件
-                themeToggle.addEventListener('click', () => {
-                    document.body.classList.toggle('dark-mode');
-                    const isDark = document.body.classList.contains('dark-mode');
-                    
-                    if (isDark) {
-                        themeToggle.innerHTML = '<i class="fa fa-sun-o"></i>';
-                        themeToggle.title = '切换到浅色模式';
-                        localStorage.setItem('theme', 'dark');
+                if (type === 'weather') {
+                    title.textContent = '🌤️ 上海天气 & 7天预报';
+                    let dailyHtml = '';
+                    if (weatherData.daily && weatherData.daily.length > 0) {
+                        dailyHtml = `<div class="p-4 bg-blue-50 rounded-xl"><div class="font-bold mb-3">📅 未来7天预报</div><div class="space-y-2">`;
+                        weatherData.daily.forEach(item => {
+                            dailyHtml += `
+                                <div class="flex items-center justify-between py-2 border-b border-blue-100 last:border-0">
+                                    <span class="w-16 font-medium text-sm">${item.day}</span>
+                                    <span class="text-xs text-gray-500 w-12">${item.date}</span>
+                                    <i class="fa ${item.icon} text-amber-500 w-6"></i>
+                                    <span class="flex-1 text-center text-sm">${item.desc}</span>
+                                    <span class="text-sm">
+                                        <span class="text-rose-600">${item.max}°</span>
+                                        <span class="text-gray-400 mx-1">/</span>
+                                        <span class="text-blue-600">${item.min}°</span>
+                                    </span>
+                                </div>
+                            `;
+                        });
+                        dailyHtml += `</div></div>`;
                     } else {
-                        themeToggle.innerHTML = '<i class="fa fa-moon-o"></i>';
-                        themeToggle.title = '切换到深色模式';
-                        localStorage.setItem('theme', 'light');
+                        dailyHtml = `<div class="p-3 bg-gray-50 rounded-xl text-center text-gray-500">暂无预报数据</div>`;
                     }
-                });
-            }
+
+                    const apiStatus = weatherData.apiStatus || 'loading';
+                    const statusText = apiStatus === 'success' ? '✅ API 更新成功' :
+                        (apiStatus === 'error' ? '❌ API 获取失败' : '⏳ API 加载中');
+
+                    content.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center p-4 bg-sky-50 rounded-xl">
+                                <div class="text-4xl ${weatherData.icon === 'fa-spinner fa-spin' ? 'text-gray-400' : 'text-amber-500'} mb-2">
+                                    <i class="fa ${weatherData.icon}"></i>
+                                </div>
+                                <div class="text-3xl font-bold">${weatherData.temp}</div>
+                                <div class="text-gray-500">${weatherData.desc}</div>
+                                <div class="text-xs text-gray-400 mt-1">更新于 ${weatherData.updateTime}</div>
+                                ${weatherData.aqi !== '--' ? `<div class="text-xs text-gray-500 mt-1">AQI: ${weatherData.aqi} · 空气质量: ${weatherData.quality}</div>` : ''}
+                                <div class="mt-2 flex justify-center">
+                                    <span class="api-status ${apiStatus}"><span class="dot"></span>${statusText}</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="p-3 bg-gray-50 rounded-xl text-center">
+                                    <div class="text-blue-500"><i class="fa fa-tint"></i></div>
+                                    <div class="font-bold">${weatherData.humidity}</div>
+                                    <div class="text-xs text-gray-500">相对湿度</div>
+                                </div>
+                                <div class="p-3 bg-gray-50 rounded-xl text-center">
+                                    <div class="text-cyan-500"><i class="fa fa-location-arrow"></i></div>
+                                    <div class="font-bold">${weatherData.wind}</div>
+                                    <div class="text-xs text-gray-500">风速</div>
+                                </div>
+                            </div>
+                            ${dailyHtml}
+                            <div class="p-2 bg-blue-50 rounded-lg text-xs text-gray-500 text-center">
+                                📌 数据来源：<a href="https://www.tianapi.com" target="_blank" class="text-blue-600 hover:underline">天行API（72号）</a>
+                            </div>
+                        </div>
+                    `;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    return;
+                }
+
+                if (type === 'oil') {
+                    title.textContent = '⛽ 油价行情';
+                    const isDown = oilData.trend === 'down';
+                    const isUp = oilData.trend === 'up';
+                    const trendText = isDown ? '下调' : (isUp ? '上调' : '持平');
+                    const trendColor = isDown ? 'text-green-600' : (isUp ? 'text-red-600' : 'text-gray-600');
+                    const bgColor = isDown ? 'bg-green-50' : (isUp ? 'bg-red-50' : 'bg-gray-50');
+
+                    const apiStatus = oilData.apiStatus || 'loading';
+                    const statusText = apiStatus === 'success' ? '✅ API 更新成功' :
+                        (apiStatus === 'error' ? '❌ API 获取失败' : '⏳ API 加载中');
+
+                    content.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center p-4 ${bgColor} rounded-xl">
+                                <div class="${trendColor} font-bold mb-1"><i class="fa fa-arrow-${isDown ? 'down' : (isUp ? 'up' : 'minus')}"></i> 油价${trendText}窗口</div>
+                                <div class="text-sm text-gray-500">上次调整：${oilData.lastAdjusted || '--'}</div>
+                                <div class="text-lg font-bold">下次调整：${oilData.nextAdjustment || '待定'}</div>
+                                <div class="text-xs text-gray-500 mt-1">地区：${oilData.region}</div>
+                                <div class="text-xs text-gray-400 mt-1">数据更新于 ${oilData.updateTime}</div>
+                                <div class="text-xs text-gray-400 mt-0.5">📊 数据源：${oilData.source}</div>
+                                <div class="mt-2 flex justify-center">
+                                    <span class="api-status ${apiStatus}"><span class="dot"></span>${statusText}</span>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl"><span>92# 汽油</span><span class="font-bold">${typeof oilData.prices['92'] === 'number' ? oilData.prices['92'].toFixed(2) : '--'} 元/L</span></div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl"><span>95# 汽油</span><span class="font-bold">${typeof oilData.prices['95'] === 'number' ? oilData.prices['95'].toFixed(2) : '--'} 元/L</span></div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl"><span>98# 汽油</span><span class="font-bold">${typeof oilData.prices['98'] === 'number' ? oilData.prices['98'].toFixed(2) : '--'} 元/L</span></div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl"><span>0# 柴油</span><span class="font-bold">${typeof oilData.prices['0'] === 'number' ? oilData.prices['0'].toFixed(2) : '--'} 元/L</span></div>
+                            </div>
+                            <div class="flex justify-center gap-3">
+                                <button onclick="forceRefreshOil()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm">
+                                    <i class="fa fa-refresh mr-1"></i> 手动刷新油价
+                                </button>
+                            </div>
+                            <div class="p-4 bg-amber-50 rounded-xl">
+                                <div class="font-bold mb-2">💡 油价提示</div>
+                                <div class="text-sm text-gray-600">油价每10个工作日调整一次，数据仅供参考，具体以当地加油站为准。</div>
+                                <div class="text-xs text-gray-500 mt-2">📊 当前数据源: ${oilData.source}</div>
+                            </div>
+                        </div>
+                    `;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    return;
+                }
+
+                if (type === 'calendar') {
+                    const now = new Date();
+                    const info = await fetchSingleDayHuangli(now.getFullYear(), now.getMonth() + 1, now.getDate());
+
+                    const yiText = info.fitness !== '--' ? info.fitness.replace(/\./g, '、').replace(/,/g, '、') : '无';
+                    const jiText = info.taboo !== '--' ? info.taboo.replace(/\./g, '、').replace(/,/g, '、') : '无';
+
+                    let lunarDisplay = '';
+                    if (info.lunarYear !== '--' && info.lunarMonth !== '--' && info.lunarDay !== '--') {
+                        lunarDisplay =
+                            `${info.tiangandizhi.year || info.lunarYear}年【${info.shengxiao}年】 ${info.lunarMonth}月${info.lunarDay}`;
+                    } else if (info.lunarDay !== '--') {
+                        lunarDisplay = `${info.lunarMonth}月${info.lunarDay}`;
+                    } else {
+                        lunarDisplay = '--';
+                    }
+
+                    const festivalText = info.festival !== '--' && info.festival !== '' ? info.festival : '';
+                    const lunarFestivalText = info.lunarFestival !== '--' && info.lunarFestival !== '' ? info.lunarFestival :
+                        '';
+                    let festivalDisplay = '';
+                    if (festivalText && lunarFestivalText) {
+                        festivalDisplay = `${festivalText}、${lunarFestivalText}`;
+                    } else if (festivalText) {
+                        festivalDisplay = festivalText;
+                    } else if (lunarFestivalText) {
+                        festivalDisplay = lunarFestivalText;
+                    }
+
+                    title.textContent = '📅 今日黄历';
+
+                    const hlStatus = huangliData.apiStatus || 'loading';
+                    const hlStatusText = hlStatus === 'success' ? '✅ 已更新' :
+                        (hlStatus === 'error' ? '❌ 获取失败' : '⏳ 加载中');
+
+                    content.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center p-4 bg-amber-50 rounded-xl">
+                                <div class="text-2xl font-bold">${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日</div>
+                                <div class="text-gray-500">${lunarDisplay}</div>
+                                ${festivalDisplay ? `<div class="text-sm text-rose-600 mt-1">🎉 ${festivalDisplay}</div>` : ''}
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-4 bg-green-50 rounded-xl text-center">
+                                    <div class="text-green-600 font-bold mb-2">✅ 宜</div>
+                                    <div class="text-sm">${yiText}</div>
+                                </div>
+                                <div class="p-4 bg-rose-50 rounded-xl text-center">
+                                    <div class="text-rose-600 font-bold mb-2">❌ 忌</div>
+                                    <div class="text-sm">${jiText}</div>
+                                </div>
+                            </div>
+                            ${info.chongsha !== '--' ? `<div class="flex items-center justify-center text-sm"><span class="text-gray-500 mr-2">🐉 冲煞：</span><span class="text-gray-700">${info.chongsha}</span></div>` : ''}
+                            ${info.jianshen !== '--' ? `<div class="flex items-center justify-center text-sm"><span class="text-gray-500 mr-2">📐 建除：</span><span class="text-gray-700">${info.jianshen}</span></div>` : ''}
+                            ${info.shenwei !== '--' ? `<div class="bg-amber-50 rounded-lg p-2 border border-amber-200 text-center"><div class="text-xs text-amber-700 font-bold mb-1">🧭 吉神方位</div><div class="text-sm text-gray-700">${info.shenwei}</div></div>` : ''}
+                            ${info.xingsu !== '--' ? `<div class="text-center text-sm"><span class="text-gray-500">⭐ 星宿：</span><span class="text-gray-700">${info.xingsu}</span></div>` : ''}
+                            ${info.pengzu !== '--' ? `<div class="text-center text-sm"><span class="text-gray-500">⚠️ 彭祖百忌：</span><span class="text-gray-700">${info.pengzu}</span></div>` : ''}
+                            ${info.taishen !== '--' ? `<div class="text-center text-sm"><span class="text-gray-500">👶 胎神：</span><span class="text-gray-700">${info.taishen}</span></div>` : ''}
+                            <div class="text-center text-xs text-gray-400">📌 老黄历：天行API（45号）</div>
+                            <div class="flex justify-center">
+                                <span class="api-status ${hlStatus}"><span class="dot"></span>老黄历 ${hlStatusText}</span>
+                            </div>
+                        </div>
+                    `;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    return;
+                }
+            };
+
+            window.closeDetailModal = function() {
+                document.getElementById('detailModal').classList.add('hidden');
+                document.getElementById('detailModal').classList.remove('flex');
+            };
 
             // ================================================================
-            //  13. 初始化
+            //  14. 初始化
             // ================================================================
             async function init() {
                 try {
-                    // 初始化主题
                     initTheme();
-                    
                     sites = loadSites();
                     renderCategories();
                     renderSubCategories();
@@ -2612,40 +2090,37 @@
                     setupEventListeners();
                     updateSiteCount();
 
-                    await fetchRealWeather();
-                    
-                    // 初始化油价信息
-                    updateOilPriceInfo();
+                    const now = new Date();
 
+                    // 加载天气
+                    await fetchWeather();
+
+                    // 加载油价
+                    await fetchOilPrice();
+
+                    // 加载老黄历
+                    const dateStr =
+                        `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                    await fetchHuangli(dateStr);
+
+                    // 更新时间
                     await updateTime();
                     updateUptime();
 
                     setInterval(updateTime, 1000);
                     setInterval(updateUptime, 1000);
-                    setInterval(fetchRealWeather, 30 * 60 * 1000);
-
-                    // 暴露全局
-                    window.openDetailModal = openDetailModal;
-                    window.closeDetailModal = closeDetailModal;
-                    window.closeAddModal = closeAddModal;
-                    window.editSite = editSite;
-                    window.deleteSite = deleteSite;
+                    setInterval(fetchWeather, 30 * 60 * 1000);
 
                     const ep = document.getElementById('errorPlaceholder');
                     if (ep) ep.style.display = 'none';
 
-                    console.log('✅ 导航页启动成功');
-                    const hasLunar = typeof window.Lunar !== 'undefined' && window.Lunar;
-                    console.log('   - 农历库:', hasLunar ? '✅ lunar-javascript (在线)' : '⚠️ 内置算法 (降级)');
-                    console.log('   - 二十四节气:', hasLunar ? '✅ lunar-javascript 自动计算' : '⚠️ 内置数据');
-                    console.log('   - 节假日:', '✅ Timor API (在线) + 内置数据补充');
-                    console.log('   - 黄历宜忌:', hasLunar ? '✅ lunar-javascript 权威数据' : '❌ 未加载');
+                    console.log('✅ 导航页启动成功 (老黄历45号 + 天气72号 + 油价104-2号)');
                 } catch (err) {
                     console.error('❌ 初始化失败:', err);
                     const ep = document.getElementById('errorPlaceholder');
                     if (ep) {
                         ep.style.display = 'block';
-                        ep.innerHTML = `<strong>⚠️ 页面加载错误</strong><br>${err.message}<br><span style="font-size:12px;">请刷新页面或检查控制台</span>`;
+                        ep.innerHTML = `<strong>⚠️ 页面加载错误</strong><br>${err.message}`;
                     }
                 }
             }
@@ -2656,7 +2131,7 @@
                 init();
             }
 
-        })(); // 结束自执行
+        })();
     </script>
 </body>
 </html>
